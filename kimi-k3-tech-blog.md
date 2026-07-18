@@ -4,7 +4,7 @@
 > **发布时间**：2026-07-16
 > **定位**：开放前沿智能（Open Frontier Intelligence）旗舰模型
 > **状态**：API 与各端产品已上线；完整权重将于 **2026-07-27 前**发布，技术报告随权重公布
-> **文档版本**：v2.0（2026-07-18 整理）
+> **文档版本**：v2.1（2026-07-18 修订：修正基准计数、标注数据来源）
 
 ---
 
@@ -15,7 +15,7 @@
 3. [核心规格总表](#三核心规格总表)
 4. [架构深度解析](#四架构深度解析)
 5. [训练与推理基础设施](#五训练与推理基础设施)
-6. [完整基准评测（35 项）](#六完整基准评测35-项)
+6. [完整基准评测（31 项）](#六完整基准评测31-项)
 7. [第三方评测与行业反应](#七第三方评测与行业反应)
 8. [官方案例研究](#八官方案例研究)
 9. [API 完整使用指南](#九api-完整使用指南)
@@ -29,7 +29,7 @@
 
 ## 一、TL;DR 核心要点
 
-- **2.8 万亿总参数**（第三方模型卡片标注激活参数约 500 亿），全球首个达到 3T 级别的开源权重模型；此前最大开源模型为 1.6T 的 DeepSeek-V4-Pro。
+- **2.8 万亿总参数**（第三方模型卡片标注激活参数约 500 亿），全球首个达到 3T 级别的开源权重模型；此前最大开源模型为 1.6T 的 DeepSeek V4 Pro。
 - 架构基于 **Kimi Delta Attention（KDA）** 与 **Attention Residuals（AttnRes）** 两大创新，分别解决"序列长度"与"模型深度"两个维度上的信息流动问题。
 - **Stable LatentMoE**：896 个专家中每 token 仅激活 16 个，稀疏度大幅超越前代。
 - **100 万 token 上下文窗口**（K2.6 的 4 倍），原生支持文本、图像、视频输入。
@@ -73,7 +73,7 @@ Kimi K3 是首个触及 2.8 万亿参数的开源模型。根据官方数据，*
 | 思考模式 | 始终开启；`reasoning_effort` 首发仅 `max` 档 |
 | 量化方案 | 权重 MXFP4、激活 MXFP8（SFT 阶段起量化感知训练） |
 | API 价格（国际） | 缓存命中输入 $0.30 / 未命中输入 $3.00 / 输出 $15.00（每百万 tokens） |
-| API 价格（中国区） | ¥2 / ¥20 / ¥100（每百万 tokens） |
+| API 价格（中国区） | ¥2 / ¥20 / ¥100（每百万 tokens；来源：API 平台定价页，官方博客仅公布美元价格） |
 | 缓存命中率 | 编程负载 >90%（Mooncake 分离式推理架构） |
 | 推荐部署 | 64 张以上加速器组成的 Supernode |
 | 权重发布 | 2026-07-27 前，协议待公布 |
@@ -102,7 +102,7 @@ S_t = (I − β·k_t·k_tᵀ)·Diag(α_t)·S_{t−1} + β·k_t·v_tᵀ
 - `S`：矩阵形式的记忆状态（fast weight / 联想记忆）
 - `β`：标量学习率（delta rule 的更新步长）
 - `Diag(α_t)`：逐通道遗忘系数，同时承担**可学习的位置编码**角色（替代 RoPE，即 NoPE 设计）
-- delta rule 更新在数学上保证长序列下的数值稳定性，百万 token 不梯度爆炸/消失
+- 逐通道遗忘系数 α∈(0,1) 使记忆状态有界，配合 delta rule 的局部更新，长序列下数值稳定，百万 token 不易梯度爆炸/消失
 
 #### 硬件效率：特化 DPLR + Chunkwise 算法
 
@@ -185,18 +185,18 @@ AttnRes 的思路：让模型**根据当前层的需求，跨深度选择性读�
 
 ---
 
-## 六、完整基准评测（35 项）
+## 六、完整基准评测（31 项）
 
 > **官方统一设置**：`reasoning_effort=max`、`temperature=1.0`、`top_p=1.0`。不同基准分别使用 KimiCode / Claude Code / Codex 三种 agentic harness（见各表备注）。数据来源：官方技术博客，经 DataLearner 结构化录入。
 
-### 6.1 编程与软件工程（7 项）
+### 6.1 编程与软件工程（8 项）
 
 | 基准 | K3 得分 | 关键对比 | 备注 |
 | --- | --- | --- | --- |
 | FrontierSWE | **81.2** | Fable 5：86.6；GPT 5.6 Sol：71.3 | K3 用 KimiCode harness |
 | Program Bench | **77.8** | GPT 5.6 Sol：77.6；Fable 5：76.8 | K3 用 KimiCode |
-| Terminal-Bench 2.1 | **88.3** | GPT 5.6 Sol：88.8；Fable 5 / Opus 4.8：84.6 | K3 用 KimiCode；其他模型取各 harness 最佳 |
-| Kimi Code Bench 2.0 | 72.9 | — | K3 同时测了 KimiCode 与 Claude Code |
+| Terminal-Bench 2.1 | **88.3** | GPT 5.6 Sol：88.8；Fable 5 / Opus 4.8：84.6 | K3 用 KimiCode；其他模型取各 harness 最佳；Fable 5 与 Opus 4.8 同分（均为 AA Terminus 2 口径），建议与原始榜单复核 |
+| Kimi Code Bench 2.0 | 72.9 | — | K3 同时测了 KimiCode 与 Claude Code 两种 harness；72.9 对应的具体 harness 待查官方原表确认 |
 | DeepSWE | 67.5 | GPT 5.6 Sol：73.0；Fable 5：70.0 | **K3 落后项**；mini-SWE-agent harness 下为 67.3 |
 | MLS Bench Lite | 48.3 | — | — |
 | SWE Marathon（长程） | **42.0（第一）** | Opus 4.8：40.0；GPT 5.6 Sol：39.0；Fable 5：35.0 | K3 与 Claude 系用 Claude Code harness |
@@ -211,11 +211,11 @@ AttnRes 的思路：让模型**根据当前层的需求，跨深度选择性读�
 | BrowseComp | **91.2** | 采用 300K 触发的上下文压缩策略；1M 上下文无压缩下为 90.4 |
 | DeepSearchQA | 95.0（F1） | — |
 
-### 6.3 智能体 —— 工具使用（4 项）
+### 6.3 智能体 —— 工具使用（3 项，另附 6.1 已列的 Terminal-Bench 2.1）
 
 | 基准 | K3 得分 | 备注 |
 | --- | --- | --- |
-| Terminal-Bench 2.1 | 88.3 | 见 6.1 |
+| Terminal-Bench 2.1 | 88.3 | 见 6.1（重复列出，不计入总数） |
 | MCP Atlas | 84.2 | 500 任务公开子集，100 轮上限，Gemini 3.1 Pro 担任评委 |
 | Toolathlon-Verified | 73.2 | — |
 | AutomationBench | 30.8 | 600 任务公开子集；AA 口径下 K3 排名第一 |
@@ -245,7 +245,7 @@ AttnRes 的思路：让模型**根据当前层的需求，跨深度选择性读�
 | HLE-Full（无工具） | 43.5 | — |
 | HLE-Full（带工具） | **56.0** | DeepSeek V4 Pro：37.7 |
 
-### 6.7 多模态理解（12 项）
+### 6.7 多模态理解（8 项）
 
 | 基准 | K3（纯模型） | K3（带工具/Python） |
 | --- | --- | --- |
@@ -266,6 +266,7 @@ AttnRes 的思路：让模型**根据当前层的需求，跨深度选择性读�
 2. Claude Fable 5 部分成绩由第三方评测，且在 Claude Code harness 下被其使用策略拒绝的请求会**自动 fallback 到 Opus 4.8**。
 3. GPT 5.5 在 KCB 2.0 中使用 "xhigh" 设置而非 max。
 4. BrowseComp 的 91.2 使用了上下文压缩策略，与"1M 原生上下文直跑"（90.4）是两种条件。
+5. 计数口径：6.1 八项 + 6.2 两项 + 6.3 三项（Terminal-Bench 2.1 与 6.1 重复不计）+ 6.4 五项 + 6.5 两项 + 6.6 三项 + 6.7 八项 = 31 项独立基准。
 
 ---
 
@@ -575,9 +576,9 @@ K3 改用顶层 `reasoning_effort`（当前仅 `max`）。`thinking` 是 K2.x �
 | Moonshot AI 官网 | https://www.moonshot.ai/ |
 | Kimi Linear 论文（KDA 技术基础） | https://arxiv.org/abs/2510.26692 |
 | Kimi Linear 开源仓库 | https://github.com/MoonshotAI/Kimi-Linear |
-| DataLearner 模型卡片（35 项评测结构化） | https://www.datalearner.com/ai-models/pretrained-models/kimi-k3 |
+| DataLearner 模型卡片（31 项评测结构化） | https://www.datalearner.com/ai-models/pretrained-models/kimi-k3 |
 | iThome 报道 | https://www.ithome.com.tw/news/177376 |
 
 ---
 
-*文档整理时间：2026-07-18。基于官方技术博客、API 文档、Kimi Linear 论文及公开第三方评测整理；官方评测数据为厂商自报口径，横向对比时请注意各模型使用的 harness 与评测条件差异。标注"待确认"的内容以 2026-07-27 权重发布及技术报告为准。*
+*文档整理时间：2026-07-18（v2.1 修订）。基于官方技术博客、API 文档、Kimi Linear 论文及公开第三方评测整理；官方评测数据为厂商自报口径，横向对比时请注意各模型使用的 harness 与评测条件差异。标注"待确认"的内容以 2026-07-27 权重发布及技术报告为准。*
