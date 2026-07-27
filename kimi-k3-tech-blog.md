@@ -3,8 +3,8 @@
 > **发布方**：月之暗面（Moonshot AI）
 > **发布时间**：2026-07-16
 > **定位**：开放前沿智能（Open Frontier Intelligence）旗舰模型
-> **状态**：API 与各端产品已上线；完整权重将于 **2026-07-27 前**发布，技术报告随权重公布
-> **文档版本**：v2.1（2026-07-18 修订：修正基准计数、标注数据来源）
+> **状态**：API 与各端产品已上线；完整权重与技术报告于 **2026-07-27** 发布，HF 仓库 `moonshotai/Kimi-K3` 占位页已上线
+> **文档版本**：v2.2（2026-07-27 修订：权重发布日信息更新）
 
 ---
 
@@ -34,7 +34,7 @@
 - **Stable LatentMoE**：896 个专家中每 token 仅激活 16 个，稀疏度大幅超越前代。
 - **100 万 token 上下文窗口**（K2.6 的 4 倍），原生支持文本、图像、视频输入。
 - 相比 K2，**整体扩展效率（scaling efficiency）提升约 2.5 倍**。
-- 始终开启思考模式，首发仅支持 `reasoning_effort=max`，low / high 档后续开放。
+- 始终开启思考模式，`reasoning_effort` 支持 low / high / max 三档，max 为默认（首发时仅 max 档，low / high 已随后开放）。
 - 官方自评：整体仍落后于 Claude Fable 5 与 GPT 5.6 Sol，但在评测套件中稳定超越其他所有受测模型，已进入前沿模型竞争区间。
 - 第三方亮点：Arena.ai 前端代码竞技场 **Elo 1679 登顶第一**；Artificial Analysis 智能指数 57 分，与 Opus 4.8 / GPT-5.5 同档。
 
@@ -55,7 +55,7 @@ Kimi K3 是首个触及 2.8 万亿参数的开源模型。根据官方数据，*
 ### 2.3 需要泼的冷水
 
 - 2.8T MoE 对推理硬件要求极高，官方建议 **64+ 加速卡 Supernode**，中小团队难以独立承担部署成本。
-- 开源协议、商用授权、微调许可等细节需等 7 月 27 日权重发布时明确（K2 系列采用 Modified MIT，可供参照）。
+- 开源协议以权重发布时的模型卡与 LICENSE 文件为准（预期 Modified MIT，与 K2 系列一致，**商用前请阅读原文**）。
 - 官方评测为厂商自报口径，且各模型使用不同 agentic harness，横向对比需谨慎。
 
 ---
@@ -65,19 +65,19 @@ Kimi K3 是首个触及 2.8 万亿参数的开源模型。根据官方数据，*
 | 项目 | 规格 |
 | --- | --- |
 | 总参数量 | 2.8T |
-| 激活参数量 | 约 50B（第三方模型卡片数据，官方技术报告待确认） |
+| 激活参数量 | 约 50B（第三方模型卡片数据，以官方技术报告为准） |
 | MoE 结构 | Stable LatentMoE，896 专家 / 每 token 激活 16 |
 | 上下文窗口 | 1,000,000 tokens |
 | 最大输出长度 | 默认 131,072 tokens，最高 1,048,576 tokens |
 | 模态 | 文本、图像、视频 → 文本（原生多模态，非拼接式） |
-| 思考模式 | 始终开启；`reasoning_effort` 首发仅 `max` 档 |
+| 思考模式 | 始终开启；`reasoning_effort` 支持 low / high / max，`max` 为默认 |
 | 量化方案 | 权重 MXFP4、激活 MXFP8（SFT 阶段起量化感知训练） |
 | API 价格（国际） | 缓存命中输入 $0.30 / 未命中输入 $3.00 / 输出 $15.00（每百万 tokens） |
 | API 价格（中国区） | ¥2 / ¥20 / ¥100（每百万 tokens；来源：API 平台定价页，官方博客仅公布美元价格） |
 | 缓存命中率 | 编程负载 >90%（Mooncake 分离式推理架构） |
 | 推荐部署 | 64 张以上加速器组成的 Supernode |
-| 权重发布 | 2026-07-27 前，协议待公布 |
-| 使用入口 | Kimi.com / App（iOS、Android、HarmonyOS）、Kimi Work（≥3.1.0，Windows 与 Apple silicon Mac）、Kimi Code（终端 `/model` 选择）、Kimi API |
+| 权重发布 | 2026-07-27，Hugging Face `moonshotai/Kimi-K3`；协议以模型卡为准 |
+| 使用入口 | Kimi.com / App（iOS、Android、HarmonyOS）、Kimi Work（≥3.1.0，Windows 与 Apple silicon Mac）、Kimi Code（终端 `/model` 选择）、Kimi API、OpenRouter（`moonshotai/kimi-k3`） |
 
 ---
 
@@ -158,7 +158,7 @@ AttnRes 的思路：让模型**根据当前层的需求，跨深度选择性读�
 输出（文本）
 ```
 
-> 注：官方博客给出的结构示意包含 Embedding → Router → Linear/Conv/L2/Norm → Shared Expert + Routed Expert → KDA → Norm → Linear → Output 等组件；精确层数、维度等超参待技术报告公布。
+> 注：官方博客给出的结构示意包含 Embedding → Router → Linear/Conv/L2/Norm → Shared Expert + Routed Expert → KDA → Norm → Linear → Output 等组件；精确层数、维度等超参以技术报告为准。
 
 ---
 
@@ -196,11 +196,11 @@ AttnRes 的思路：让模型**根据当前层的需求，跨深度选择性读�
 | FrontierSWE | **81.2** | Fable 5：86.6；GPT 5.6 Sol：71.3 | K3 用 KimiCode harness |
 | Program Bench | **77.8** | GPT 5.6 Sol：77.6；Fable 5：76.8 | K3 用 KimiCode |
 | Terminal-Bench 2.1 | **88.3** | GPT 5.6 Sol：88.8；Fable 5 / Opus 4.8：84.6 | K3 用 KimiCode；其他模型取各 harness 最佳；Fable 5 与 Opus 4.8 同分（均为 AA Terminus 2 口径），建议与原始榜单复核 |
-| Kimi Code Bench 2.0 | 72.9 | — | K3 同时测了 KimiCode 与 Claude Code 两种 harness；72.9 对应的具体 harness 待查官方原表确认 |
-| DeepSWE | 67.5 | GPT 5.6 Sol：73.0；Fable 5：70.0 | **K3 落后项**；mini-SWE-agent harness 下为 67.3 |
+| Kimi Code Bench 2.0 | 72.9 | — | K3 同时测了 KimiCode 与 Claude Code 两种 harness；72.9 对应的具体 harness 待查官方原表确认；官方脚注注明 GPT 5.6 Sol 有 10% 任务触发其 cyber guard |
+| DeepSWE | 67.5 | GPT 5.6 Sol：73.0；Fable 5：70.0 | **K3 落后项**；DeepSWE v1.1 任务；mini-SWE-agent harness 下为 67.3 |
 | MLS Bench Lite | 48.3 | — | — |
-| SWE Marathon（长程） | **42.0（第一）** | Opus 4.8：40.0；GPT 5.6 Sol：39.0；Fable 5：35.0 | K3 与 Claude 系用 Claude Code harness |
-| PostTrain Bench | 36.6 | — | 三次运行平均，max 思考档 |
+| SWE Marathon（长程） | **42.0（第一）** | Opus 4.8：40.0；GPT 5.6 Sol：39.0；Fable 5：35.0 | K3 与 Claude 系用 Claude Code harness；官方采用 H20 校准的 v1.1 任务分支（Docker 镜像、性能门限与参考 oracle 按 H20 重校准，正确性与反作弊校验不变）；Fable 5 在该评测中 35% 任务触发 fallback |
+| PostTrain Bench | 36.6 | — | 三次运行平均，max 思考档；官方在 H20 上运行（官方设置为 H100） |
 
 **规律**：K3 的优势集中在**长程、需持续修正**的工程任务（SWE Marathon 第一），单次编程题（DeepSWE）仍落后于两款最强闭源模型。
 
@@ -258,15 +258,16 @@ AttnRes 的思路：让模型**根据当前层的需求，跨深度选择性读�
 | WorldVQA ForceAnswer | 51.0 | — |
 | ZeroBench Main | 23.0 | **41.0** |
 
-> 多模态评测除 ZeroBench（官方设置、运行 5 次）外均为 3 次运行平均；MMMU-Pro 遵循官方协议，图片前置。
+> 多模态评测除 ZeroBench（官方设置、运行 5 次）外均为 3 次运行平均；MMMU-Pro 遵循官方协议，图片前置。PerceptionBench 已有公开介绍页（kimi.com/blog/perception-bench）。
 
 ### 6.8 评测口径注意事项
 
 1. 各模型 harness 不同（KimiCode / Claude Code / Codex / Terminus 2），换 harness 结果可能变化。
-2. Claude Fable 5 部分成绩由第三方评测，且在 Claude Code harness 下被其使用策略拒绝的请求会**自动 fallback 到 Opus 4.8**。
+2. Claude Fable 5 部分成绩由第三方评测，且在 Claude Code harness 下被其使用策略拒绝的请求会**自动 fallback 到 Opus 4.8**（SWE Marathon 中 fallback 比例达 35%）。
 3. GPT 5.5 在 KCB 2.0 中使用 "xhigh" 设置而非 max。
 4. BrowseComp 的 91.2 使用了上下文压缩策略，与"1M 原生上下文直跑"（90.4）是两种条件。
 5. 计数口径：6.1 八项 + 6.2 两项 + 6.3 三项（Terminal-Bench 2.1 与 6.1 重复不计）+ 6.4 五项 + 6.5 两项 + 6.6 三项 + 6.7 八项 = 31 项独立基准。
+6. 部分官方评测在 H20 而非原始 H100 环境下运行（SWE Marathon 为 H20 校准分支，PostTrain Bench 在 H20 运行），跨硬件对比需注意。
 
 ---
 
@@ -288,7 +289,7 @@ AttnRes 的思路：让模型**根据当前层的需求，跨深度选择性读�
 
 - **Financial Times**：K3 可能动摇"中国前沿 AI 落后美国 8–12 个月"的共识；价格因素正推动美欧企业转向中国模型。
 - **iThome**：K3 在编程、智能体、推理、视觉四大类评测皆跻身第一梯队；编程与 Fable 5、GPT 5.6 Sol 互有领先。
-- 亦有观察者提醒：早期基准可能无法完全反映真实世界的可靠性，需等权重、技术报告与第三方实测。
+- 亦有观察者提醒：早期基准可能无法完全反映真实世界的可靠性；另有第三方测试提及较高的幻觉率（未经官方确认），需结合权重发布后的独立实测判断。
 
 ---
 
@@ -298,7 +299,7 @@ AttnRes 的思路：让模型**根据当前层的需求，跨深度选择性读�
 
 ### 8.1 GPU Kernel 优化
 
-- **设置**：相同沙箱，最长 24 小时，4 个任务（AttnRes、KDA、512 头维 MLA kernel），横跨 NVIDIA H200 与另一家厂商的 GPGPU。
+- **设置**：相同沙箱，最长 24 小时，4 个任务（AttnRes、KDA、512 头维 MLA kernel），横跨 NVIDIA Hopper GPU 与另一家厂商的 GPGPU。
 - **结果**：K3 与 Fable 5（含 fallback）表现相当，显著超越 Opus 4.8、GPT 5.6 Sol、GPT 5.5。
 - **彩蛋**：K3 开发后期，团队大部分 kernel 优化工作已由早期版 K3 自己完成。
 
@@ -356,7 +357,7 @@ client = OpenAI(
 
 completion = client.chat.completions.create(
     model="kimi-k3",
-    reasoning_effort="max",  # 首发仅支持 max；勿用 K2.x 的 thinking 参数
+    reasoning_effort="max",  # 可选 low / high / max，max 为默认；勿用 K2.x 的 thinking 参数
     messages=[{"role": "user", "content": "用一句话介绍 Kimi K3。"}],
 )
 print(completion.choices[0].message.content)
@@ -383,12 +384,12 @@ curl https://api.moonshot.cn/v1/chat/completions \
 | `kimi-k2.7-code-highspeed` | 编程 + 更高输出速度 | 256K |
 | `kimi-k2.6` | 通用对话、Agent、视觉理解（思考/非思考双模式） | 256K |
 
-官方建议：不确定时默认从 `kimi-k3` 开始；主打代码生成/修改且追求速度时选 `kimi-k2.7-code-highspeed`。
+官方建议：不确定时默认从 `kimi-k3` 开始；主打代码生成/修改且追求速度时选 `kimi-k2.7-code-highspeed`。K3 也可通过 OpenRouter（`moonshotai/kimi-k3`）访问。
 
 ### 9.3 思考力度（reasoning_effort）
 
 - K3 **始终开启思考模式**，通过顶层 `reasoning_effort` 配置；**不要**使用 K2.x 的 `thinking` 参数。
-- 当前仅支持 `"max"`（默认）；low / high 档后续上线。
+- 支持 `"low"` / `"high"` / `"max"` 三档，`"max"` 为默认（首发时仅 max 档，low / high 已随后开放）。
 
 ```python
 completion = client.chat.completions.create(
@@ -507,9 +508,8 @@ completion = client.chat.completions.create(
 
 **暂不适合 K3 的场景**：
 
-- 权重发布前的私有化部署（7 月 27 日前只能走 API）；
 - 单卡/工作站本地运行（2.8T 参数 + 官方建议 64 卡 Supernode，个人部署不现实）；
-- 对延迟敏感的简单问答（思考模式始终开启，且首发只有 max 档）。
+- 对延迟敏感的简单问答（思考模式始终开启，可改用 low 档降低延迟，或选 K2.7 Code）。
 
 ---
 
@@ -517,22 +517,23 @@ completion = client.chat.completions.create(
 
 ### 12.1 权重与协议
 
-- **时间表**：完整权重 2026-07-27 前发布；技术报告（架构、训练、评测细节）同步公布。
-- **协议**：待官方公告。参照系：K2 系列采用 **Modified MIT**（免费商用授权）。
-- **当前状态**：官方正与推理合作伙伴和开源维护者对齐技术细节，确保生态可靠上线。
+- **发布**：完整权重与技术报告于 2026-07-27 发布，官方仓库为 Hugging Face [`moonshotai/Kimi-K3`](https://huggingface.co/moonshotai/Kimi-K3)（发布前为占位倒计时页）。
+- **协议**：以模型卡与仓库内 LICENSE 文件为准；预期与 K2 系列一致为 **Modified MIT**（免费商用授权），**商用前请阅读正式协议原文**。
+- **权重体积**：第三方报道约 594GB（原生 MXFP4 safetensors）；社区 GGUF 量化版本通常在发布后数日出现，非官方提供。
 
 ### 12.2 自部署硬件估算
 
 | 项目 | 估算 |
 | --- | --- |
-| 权重存储（4-bit） | 约 1.4 TB（未计路由、KV cache、框架、视觉模块） |
+| 权重存储（4-bit） | 约 1.4 TB（未计路由、KV cache、框架、视觉模块）；第三方报道下载包约 594GB |
 | 官方建议 | 64+ 加速卡 Supernode（大高带宽通信域） |
+| 实验性最低 | 第三方报道 8× H100 80GB 可加载（非生产建议） |
 | 消费级硬件 | 单张 RTX 5090 / 普通工作站**无法**运行完整模型 |
 
 ### 12.3 权重发布后需确认的三件事
 
-1. 模型授权是否允许商业使用与衍生模型、是否允许微调；
-2. vLLM / SGLang 等框架何时完整支持 KDA 与前缀缓存（官方 vLLM KDA prefill-cache 实现随模型发布）；
+1. 模型授权是否允许商业使用与衍生模型、是否允许微调（以正式 LICENSE 为准）；
+2. vLLM / SGLang 等框架的 KDA 与前缀缓存支持进度（官方 vLLM KDA prefill-cache 实现随模型发布）；
 3. 官方是否同步提供量化权重、硬件需求说明与分布式部署示例。
 
 ### 12.4 相关开源资产（已发布）
@@ -554,16 +555,16 @@ K3 是通用旗舰，不是 K2.7 Code 的替代者。K2.7 Code 继续服务编�
 大概率是只回传了 `content`。K3 要求回传完整 assistant message（含 `reasoning_content`、`tool_calls` 等）；也不要在会话中途从其他模型切换到 K3。
 
 **Q4：API 的 `thinking` 参数还能用吗？**
-K3 改用顶层 `reasoning_effort`（当前仅 `max`）。`thinking` 是 K2.x 系列的参数，不要混用。
+K3 改用顶层 `reasoning_effort`（low / high / max，max 为默认）。`thinking` 是 K2.x 系列的参数，不要混用。
 
 **Q5：1M 上下文是不是可以随便塞？**
 容量是上限。输入越长，首 token 延迟、推理时间与费用越高。建议保持前缀稳定以命中缓存（编程负载命中率 >90%）。
 
 **Q6：现在能本地部署吗？**
-不能。权重 7 月 27 日前发布；且即便发布，官方建议 64+ 加速卡 Supernode，个人与普通企业更现实的选择是官方 API 或推理合作伙伴。
+权重于 2026-07-27 在 Hugging Face（`moonshotai/Kimi-K3`）发布后可下载。但官方建议 64+ 加速卡 Supernode，个人与普通企业更现实的选择仍是官方 API、OpenRouter 或推理合作伙伴。
 
 **Q7：K3 的评测能直接和 GPT 5.6 Sol / Fable 5 比吗？**
-需谨慎。各模型使用不同 harness（KimiCode / Claude Code / Codex），部分 Claude 成绩含 fallback，运行次数与工具条件也不完全一致。官方结论是"已进入前沿竞争区间，但整体体验仍落后"。
+需谨慎。各模型使用不同 harness（KimiCode / Claude Code / Codex），部分 Claude 成绩含 fallback（SWE Marathon 中达 35%），运行次数、硬件（部分为 H20 校准环境）与工具条件也不完全一致。官方结论是"已进入前沿竞争区间，但整体体验仍落后"。
 
 ---
 
@@ -573,12 +574,14 @@ K3 改用顶层 `reasoning_effort`（当前仅 `max`）。`thinking` 是 K2.x �
 | --- | --- |
 | 官方技术博客 | https://www.kimi.com/zh-cn/blog/kimi-k3 |
 | API 快速开始 | https://platform.kimi.com/docs/guide/kimi-k3-quickstart |
+| Hugging Face 权重仓库 | https://huggingface.co/moonshotai/Kimi-K3 |
 | Moonshot AI 官网 | https://www.moonshot.ai/ |
 | Kimi Linear 论文（KDA 技术基础） | https://arxiv.org/abs/2510.26692 |
 | Kimi Linear 开源仓库 | https://github.com/MoonshotAI/Kimi-Linear |
+| PerceptionBench 介绍页 | https://www.kimi.com/blog/perception-bench |
 | DataLearner 模型卡片（31 项评测结构化） | https://www.datalearner.com/ai-models/pretrained-models/kimi-k3 |
 | iThome 报道 | https://www.ithome.com.tw/news/177376 |
 
 ---
 
-*文档整理时间：2026-07-18（v2.1 修订）。基于官方技术博客、API 文档、Kimi Linear 论文及公开第三方评测整理；官方评测数据为厂商自报口径，横向对比时请注意各模型使用的 harness 与评测条件差异。标注"待确认"的内容以 2026-07-27 权重发布及技术报告为准。*
+*文档整理时间：2026-07-18；v2.2 修订：2026-07-27（权重发布日）。基于官方技术博客、API 文档、Kimi Linear 论文及公开第三方评测整理；官方评测数据为厂商自报口径，横向对比时请注意各模型使用的 harness、硬件环境与评测条件差异。权重协议与激活参数等细节以 2026-07-27 发布的模型卡及技术报告为最终依据。*
