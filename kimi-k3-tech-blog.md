@@ -4,7 +4,7 @@
 > **发布时间**：2026-07-16
 > **定位**：开放前沿智能（Open Frontier Intelligence）旗舰模型
 > **状态**：权重与技术报告已于 **2026-07-27** 发布（Hugging Face `moonshotai/Kimi-K3`），协议为 Kimi K3 License
-> **文档版本**：v3.0（2026-07-28 修订：依据官方模型卡与技术报告落定全部待确认项）
+> **文档版本**：v3.1（2026-07-28 修订：补充数据来源与版本标注）
 
 ---
 
@@ -84,6 +84,8 @@ Kimi K3 是首个触及 2.8 万亿参数的开源模型。根据官方数据，*
 | 权重发布 | 2026-07-27 已发布，Hugging Face `moonshotai/Kimi-K3`，**Kimi K3 License** |
 | 官方推理引擎 | vLLM、SGLang、TokenSpeed（官方 recipes / cookbook 随权重发布） |
 | 使用入口 | Kimi.com / App（iOS、Android、HarmonyOS）、Kimi Work（≥3.1.0，Windows 与 Apple silicon Mac）、Kimi Code（终端 `/model` 选择）、Kimi API、OpenRouter（`moonshotai/kimi-k3`）、Together AI 等推理服务商 |
+
+> **数据来源**：架构与部署参数取自 Hugging Face 官方模型卡（2026-07-27 发布，2026-07-28 抓取核对）；价格与缓存命中率取自官方技术博客与 API 定价页；"最大输出长度"取自 API 文档。除特别标注外均为官方口径。
 
 ---
 
@@ -196,7 +198,9 @@ AttnRes 的思路：让模型**根据当前层的需求，跨深度选择性读�
 
 ## 六、完整基准评测（31 项）
 
-> **官方统一设置**：`reasoning_effort=max`、`temperature=1.0`；top-p 按任务类型区分——单步任务（GPQA、HLE、无工具视觉基准）top_p=0.95，agentic 任务 top_p=1.0。不同基准分别使用 Kimi Code / Claude Code / Codex 三种 agentic harness（见各表备注）。数据来源：官方技术博客与官方模型卡完整评测表。
+> **官方统一设置**：`reasoning_effort=max`、`temperature=1.0`；top-p 按任务类型区分——单步任务（GPQA、HLE、无工具视觉基准）top_p=0.95，agentic 任务 top_p=1.0。不同基准分别使用 Kimi Code / Claude Code / Codex 三种 agentic harness（见各表备注）。
+>
+> **数据版本**：官方模型卡完整评测表（随权重于 2026-07-27 发布，2026-07-28 抓取核对）；早期版本曾引用 DataLearner 第三方录入，与官方完整表有出入之处均已按官方表校正（见 6.8 第 7 条）。各模型的复现条件（harness、硬件、运行次数）以官方脚注为准，本文未做独立复现。
 >
 > 注：官方模型卡完整表还包含本文未收录的更多基准（CritPt、AA-LCR、SciCode、ResearchRubrics、MCPMark-Verified、Agents' Last Exam、OSWorld(-Verified/2.0)、τ³-Banking、Harvey Lab-AA、CorpFin v2、Finance Agent v2、Legal Research Bench、Video-MME、MMVU 等），需要完整数据的读者请直接查阅模型卡。
 
@@ -598,4 +602,4 @@ K3 改用顶层 `reasoning_effort`（low / high / max，max 为默认）。`thin
 
 ---
 
-*文档整理时间：2026-07-18；v3.0 修订：2026-07-28（权重与技术报告发布后最终核查）。基于官方技术博客、官方模型卡、API 文档、Kimi Linear 论文及公开第三方评测整理；官方评测数据为厂商自报口径，横向对比时请注意各模型使用的 harness、硬件环境与评测条件差异。*
+*文档整理时间：2026-07-18；v3.0 修订：2026-07-28（权重与技术报告发布后最终核查）；v3.1 修订：2026-07-28（补充来源与版本标注）。基于官方技术博客、官方模型卡、API 文档、Kimi Linear 论文及公开第三方评测整理；官方评测数据为厂商自报口径，横向对比时请注意各模型使用的 harness、硬件环境与评测条件差异。*
