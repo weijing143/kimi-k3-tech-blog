@@ -22,6 +22,7 @@
 ## 专题文章（posts/）
 
 - [《Kimi K3 Agent 工程实践：完整回传 reasoning / tool history 的可靠调用框架》](./posts/k3-agent-engineering.md) —— 配套可运行代码见 [examples/k3_agent_framework/](./examples/k3_agent_framework/)
+- [《KDA 不是"线性注意力"这么简单：从递推公式到 vLLM Prefix Cache》](./posts/kda-from-formula-to-vllm.md) —— 从 delta rule 推导到 FLA / vLLM 源码追踪
 
 ## 资料来源
 
