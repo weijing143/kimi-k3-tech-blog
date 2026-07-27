@@ -19,6 +19,10 @@
 - 部署、开源与生态
 - 常见问题 FAQ
 
+## 专题文章（posts/）
+
+- [《Kimi K3 Agent 工程实践：完整回传 reasoning / tool history 的可靠调用框架》](./posts/k3-agent-engineering.md) —— 配套可运行代码见 [examples/k3_agent_framework/](./examples/k3_agent_framework/)
+
 ## 资料来源
 
 内容整理自以下公开资料，版权归原作者 / 机构所有：
