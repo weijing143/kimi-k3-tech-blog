@@ -1,0 +1,19 @@
+name: 内容建议
+description: 建议新的专题文章、示例代码或文档改进
+title: "[idea] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 建议内容
+      description: 想增加什么？面向什么读者？解决什么问题？
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: 可用的一手来源
+      description: 官方文档 / 论文 / 源码链接（可选）
+    validations:
+      required: false

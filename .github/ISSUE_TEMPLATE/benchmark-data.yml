@@ -1,0 +1,57 @@
+name: 实测数据提交
+description: 提交自部署 / API 压测的实测数据（用于补充实验手册留空表格）
+title: "[data] "
+labels: ["data"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢提供实测数据！**没有环境上下文的数字无法合并**，请完整填写以下各项。
+  - type: input
+    id: hardware
+    attributes:
+      label: 硬件环境
+      description: GPU 型号与数量，如 8× H100 80GB / 64× H200 Supernode
+      placeholder: "例：8× H100 80GB，单节点"
+    validations:
+      required: true
+  - type: input
+    id: engine
+    attributes:
+      label: 推理引擎与版本
+      description: vLLM / SGLang / TokenSpeed / 官方 API，附确切版本号（release 链接更佳）
+      placeholder: "例：vLLM x.y.z（https://github.com/vllm-project/vllm/releases/...）"
+    validations:
+      required: true
+  - type: textarea
+    id: launch_params
+    attributes:
+      label: 启动参数 / 并行策略
+      description: 完整启动命令或参数列表（TP / EP / PP、max-model-len、prefix caching 等）
+      placeholder: "例：vllm serve moonshotai/Kimi-K3 --tensor-parallel-size 8 --max-model-len 1048576 ..."
+    validations:
+      required: true
+  - type: textarea
+    id: results
+    attributes:
+      label: 实测结果
+      description: 贴入压测结果（建议附 bench_serving.py 输出的 JSON），并说明对应实验手册中的哪个实验（A/B/C/D/E）
+      placeholder: "实验 A：并发 1/4/8/16 的 TTFT / TPOT / 吞吐 ..."
+    validations:
+      required: true
+  - type: input
+    id: date
+    attributes:
+      label: 测试日期
+      placeholder: "例：2026-08-01"
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: 确认
+      options:
+        - label: 以上数据为本人实测，非转载第三方结果
+          required: true
+        - label: 我理解数据将以 CC BY-NC 4.0 协议并入本仓库
+          required: true
