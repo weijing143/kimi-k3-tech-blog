@@ -3,8 +3,8 @@
 > **发布方**：月之暗面（Moonshot AI）
 > **发布时间**：2026-07-16
 > **定位**：开放前沿智能（Open Frontier Intelligence）旗舰模型
-> **状态**：API 与各端产品已上线；完整权重与技术报告于 **2026-07-27** 发布，HF 仓库 `moonshotai/Kimi-K3` 占位页已上线
-> **文档版本**：v2.2（2026-07-27 修订：权重发布日信息更新）
+> **状态**：权重与技术报告已于 **2026-07-27** 发布（Hugging Face `moonshotai/Kimi-K3`），协议为 Kimi K3 License
+> **文档版本**：v3.0（2026-07-28 修订：依据官方模型卡与技术报告落定全部待确认项）
 
 ---
 
@@ -29,12 +29,12 @@
 
 ## 一、TL;DR 核心要点
 
-- **2.8 万亿总参数**（第三方模型卡片标注激活参数约 500 亿），全球首个达到 3T 级别的开源权重模型；此前最大开源模型为 1.6T 的 DeepSeek V4 Pro。
+- **2.8 万亿总参数、激活参数 104B**（官方模型卡数据），全球首个达到 3T 级别的开源权重模型；此前最大开源模型为 1.6T 的 DeepSeek V4 Pro。
 - 架构基于 **Kimi Delta Attention（KDA）** 与 **Attention Residuals（AttnRes）** 两大创新，分别解决"序列长度"与"模型深度"两个维度上的信息流动问题。
-- **Stable LatentMoE**：896 个专家中每 token 仅激活 16 个，稀疏度大幅超越前代。
+- **Stable LatentMoE**：896 个专家中每 token 仅激活 16 个（另有 2 个共享专家），稀疏度大幅超越前代。
 - **100 万 token 上下文窗口**（K2.6 的 4 倍），原生支持文本、图像、视频输入。
 - 相比 K2，**整体扩展效率（scaling efficiency）提升约 2.5 倍**。
-- 始终开启思考模式，`reasoning_effort` 支持 low / high / max 三档，max 为默认（首发时仅 max 档，low / high 已随后开放）。
+- 始终开启思考模式，`reasoning_effort` 支持 low / high / max 三档，max 为默认。
 - 官方自评：整体仍落后于 Claude Fable 5 与 GPT 5.6 Sol，但在评测套件中稳定超越其他所有受测模型，已进入前沿模型竞争区间。
 - 第三方亮点：Arena.ai 前端代码竞技场 **Elo 1679 登顶第一**；Artificial Analysis 智能指数 57 分，与 Opus 4.8 / GPT-5.5 同档。
 
@@ -55,7 +55,7 @@ Kimi K3 是首个触及 2.8 万亿参数的开源模型。根据官方数据，*
 ### 2.3 需要泼的冷水
 
 - 2.8T MoE 对推理硬件要求极高，官方建议 **64+ 加速卡 Supernode**，中小团队难以独立承担部署成本。
-- 开源协议以权重发布时的模型卡与 LICENSE 文件为准（预期 Modified MIT，与 K2 系列一致，**商用前请阅读原文**）。
+- 开源协议为 **Kimi K3 License**——是月之暗面的自定义协议，**并非**此前外界普遍预期的 Modified MIT，商用、微调、再分发前务必阅读协议原文。
 - 官方评测为厂商自报口径，且各模型使用不同 agentic harness，横向对比需谨慎。
 
 ---
@@ -65,9 +65,14 @@ Kimi K3 是首个触及 2.8 万亿参数的开源模型。根据官方数据，*
 | 项目 | 规格 |
 | --- | --- |
 | 总参数量 | 2.8T |
-| 激活参数量 | 约 50B（第三方模型卡片数据，以官方技术报告为准） |
-| MoE 结构 | Stable LatentMoE，896 专家 / 每 token 激活 16 |
-| 上下文窗口 | 1,000,000 tokens |
+| 激活参数量 | **104B**（官方模型卡） |
+| 层数 | 93 层（含 1 层 Dense 层）；注意力层组成：69 KDA + 24 Gated MLA |
+| 注意力参数 | 隐藏维度 7168，96 个注意力头 |
+| MoE 结构 | Stable LatentMoE，896 专家 / 每 token 激活 16 + 2 共享专家；Latent MoE 维度 3584，单专家隐藏维度 3072 |
+| 激活函数 | SiTU-GLU |
+| 视觉编码器 | MoonViT-V2（401M 参数） |
+| 词表 | 160K |
+| 上下文窗口 | 1,048,576 tokens |
 | 最大输出长度 | 默认 131,072 tokens，最高 1,048,576 tokens |
 | 模态 | 文本、图像、视频 → 文本（原生多模态，非拼接式） |
 | 思考模式 | 始终开启；`reasoning_effort` 支持 low / high / max，`max` 为默认 |
@@ -76,14 +81,17 @@ Kimi K3 是首个触及 2.8 万亿参数的开源模型。根据官方数据，*
 | API 价格（中国区） | ¥2 / ¥20 / ¥100（每百万 tokens；来源：API 平台定价页，官方博客仅公布美元价格） |
 | 缓存命中率 | 编程负载 >90%（Mooncake 分离式推理架构） |
 | 推荐部署 | 64 张以上加速器组成的 Supernode |
-| 权重发布 | 2026-07-27，Hugging Face `moonshotai/Kimi-K3`；协议以模型卡为准 |
-| 使用入口 | Kimi.com / App（iOS、Android、HarmonyOS）、Kimi Work（≥3.1.0，Windows 与 Apple silicon Mac）、Kimi Code（终端 `/model` 选择）、Kimi API、OpenRouter（`moonshotai/kimi-k3`） |
+| 权重发布 | 2026-07-27 已发布，Hugging Face `moonshotai/Kimi-K3`，**Kimi K3 License** |
+| 官方推理引擎 | vLLM、SGLang、TokenSpeed（官方 recipes / cookbook 随权重发布） |
+| 使用入口 | Kimi.com / App（iOS、Android、HarmonyOS）、Kimi Work（≥3.1.0，Windows 与 Apple silicon Mac）、Kimi Code（终端 `/model` 选择）、Kimi API、OpenRouter（`moonshotai/kimi-k3`）、Together AI 等推理服务商 |
 
 ---
 
 ## 四、架构深度解析
 
 Kimi K3 的架构可概括为一句话：**用 KDA 解决序列长度维度的效率问题，用 AttnRes 解决模型深度维度的信息传递问题，用 Stable LatentMoE 在宽度维度上极致扩容**。
+
+官方模型卡公布的关键超参：**93 层**（1 层 Dense + 69 层 KDA + 24 层 Gated MLA 的组合结构），注意力隐藏维度 7168、96 头；Latent MoE 维度 3584、单专家隐藏维度 3072；896 路由专家每 token 选 16，另有 2 个共享专家；视觉编码器为 401M 参数的 MoonViT-V2。93 层 ÷ (69 KDA + 24 MLA) 与"3:1 混合"比例吻合（69:24 ≈ 2.875:1）。
 
 ### 4.1 Kimi Delta Attention（KDA）—— 序列长度维度
 
@@ -112,7 +120,7 @@ S_t = (I − β·k_t·k_tᵀ)·Diag(α_t)·S_{t−1} + β·k_t·v_tᵀ
 
 #### 混合比例与实测收益
 
-- **3:1 混合**：每 3 层 KDA 线性注意力搭配 1 层全注意力（MLA），75% 的层无需 KV cache。
+- **约 3:1 混合**：官方模型卡确认为 69 层 KDA + 24 层 Gated MLA（另有 1 层 Dense 层），约 74% 的注意力层无需 KV cache。
 - Kimi Linear 实验（48B-A3B，5.7T tokens 训练）：KV cache 减少最高 **75%**；1M 上下文下 TPOT 1.84ms vs MLA 11.48ms，**解码提速 6.3 倍**；MMLU-Pro 51.0、RULER(128k) 84.3，同配方下全面优于全 MLA。
 - K3 官方数据：KDA 在百万 token 环境下实现**最高 6.3 倍解码速度提升**。
 
@@ -127,13 +135,13 @@ AttnRes 的思路：让模型**根据当前层的需求，跨深度选择性读�
 
 ### 4.3 Stable LatentMoE —— 宽度维度的极致稀疏
 
-896 选 16 意味着**每个 token 只使用约 1.8% 的专家**。在此极端稀疏度下，路由稳定性与优化成为一阶问题，K3 引入四项配套技术：
+896 选 16 意味着**每个 token 只使用约 1.8% 的路由专家**（另有 2 个共享专家常驻）。在此极端稀疏度下，路由稳定性与优化成为一阶问题，K3 引入四项配套技术：
 
 | 技术 | 解决的问题 | 机制 |
 | --- | --- | --- |
 | **Quantile Balancing** | 专家负载不均 | 直接从路由器分数的**分位数**推导专家分配，消除启发式更新与敏感的负载均衡超参 |
 | **Per-Head Muon** | 大规模优化 | 将 Muon 优化器扩展到**按注意力头独立优化**，实现更自适应的学习 |
-| **SiTU（Sigmoid Tanh Unit）** | 激活控制 | 新型激活函数，改进激活的动态范围控制 |
+| **SiTU（Sigmoid Tanh Unit）** | 激活控制 | 新型激活函数，改进激活的动态范围控制（模型卡记为 SiTU-GLU） |
 | **Gated MLA** | 注意力选择性 | 在 MLA 上增加门控，提升注意力头的选择性 |
 
 ### 4.4 架构总览（文字版）
@@ -143,12 +151,12 @@ AttnRes 的思路：让模型**根据当前层的需求，跨深度选择性读�
    │
    ▼
 ┌─────────────────────────────────────┐
-│  Block × N（3:1 交错）               │
+│  Block × 93（KDA : Gated MLA ≈ 3:1） │
 │  ┌───────────────┐  ┌────────────┐  │
 │  │ KDA 线性注意力 │×3│ Gated MLA  │×1│  ← 序列维度：KDA 为主
 │  └───────────────┘  └────────────┘  │
 │  ┌───────────────────────────────┐  │
-│  │ Stable LatentMoE FFN          │  │  ← 宽度维度：896 选 16
+│  │ Stable LatentMoE FFN          │  │  ← 宽度维度：896 选 16 + 2 共享
 │  │ (Router + Shared/Routed Expert)│  │
 │  └───────────────────────────────┘  │
 │  + Attention Residuals 跨层读取      │  ← 深度维度：选择性残差
@@ -158,7 +166,7 @@ AttnRes 的思路：让模型**根据当前层的需求，跨深度选择性读�
 输出（文本）
 ```
 
-> 注：官方博客给出的结构示意包含 Embedding → Router → Linear/Conv/L2/Norm → Shared Expert + Routed Expert → KDA → Norm → Linear → Output 等组件；精确层数、维度等超参以技术报告为准。
+> 官方结构示意包含 Embedding → Router → Linear/Conv/L2/Norm → Shared Expert + Routed Expert → KDA → Norm → Linear → Output 等组件；完整超参见第三节规格表（来源：官方模型卡）。
 
 ---
 
@@ -179,7 +187,8 @@ AttnRes 的思路：让模型**根据当前层的需求，跨深度选择性读�
 
 ### 5.4 推理部署
 
-- **vLLM 贡献**：KDA 对传统 prefix caching 构成新挑战，官方已向 vLLM 社区贡献 **KDA prefill-cache 实现**，随模型一同发布——这是 K3 能以有竞争力的 token 价格提供服务的关键。
+- **vLLM 贡献**：KDA 对传统 prefix caching 构成新挑战，官方已向 vLLM 社区贡献 **KDA prefill-cache 实现**——这是 K3 能以有竞争力的 token 价格提供服务的关键。
+- **官方推理引擎支持**：权重发布时官方即提供 **vLLM（recipes）、SGLang（cookbook）、TokenSpeed（recipes）** 的部署支持；Transformers（`trust_remote_code`）亦可加载。
 - **Mooncake 分离式推理架构**：官方 API 由 Mooncake 支撑，编程负载缓存命中率 **>90%**（缓存命中输入价格仅为未命中的 1/10）。
 - **Supernode 建议**：推理效率受益于更大的高带宽通信域，官方建议 **64+ 加速卡的 Supernode** 配置。按 4-bit 权重理论估算，仅权重就需约 **1.4TB** 存储（未计路由、KV cache、框架与视觉模块），单张消费级显卡无法承载。
 
@@ -187,20 +196,22 @@ AttnRes 的思路：让模型**根据当前层的需求，跨深度选择性读�
 
 ## 六、完整基准评测（31 项）
 
-> **官方统一设置**：`reasoning_effort=max`、`temperature=1.0`、`top_p=1.0`。不同基准分别使用 KimiCode / Claude Code / Codex 三种 agentic harness（见各表备注）。数据来源：官方技术博客，经 DataLearner 结构化录入。
+> **官方统一设置**：`reasoning_effort=max`、`temperature=1.0`；top-p 按任务类型区分——单步任务（GPQA、HLE、无工具视觉基准）top_p=0.95，agentic 任务 top_p=1.0。不同基准分别使用 Kimi Code / Claude Code / Codex 三种 agentic harness（见各表备注）。数据来源：官方技术博客与官方模型卡完整评测表。
+>
+> 注：官方模型卡完整表还包含本文未收录的更多基准（CritPt、AA-LCR、SciCode、ResearchRubrics、MCPMark-Verified、Agents' Last Exam、OSWorld(-Verified/2.0)、τ³-Banking、Harvey Lab-AA、CorpFin v2、Finance Agent v2、Legal Research Bench、Video-MME、MMVU 等），需要完整数据的读者请直接查阅模型卡。
 
 ### 6.1 编程与软件工程（8 项）
 
 | 基准 | K3 得分 | 关键对比 | 备注 |
 | --- | --- | --- | --- |
-| FrontierSWE | **81.2** | Fable 5：86.6；GPT 5.6 Sol：71.3 | K3 用 KimiCode harness |
-| Program Bench | **77.8** | GPT 5.6 Sol：77.6；Fable 5：76.8 | K3 用 KimiCode |
-| Terminal-Bench 2.1 | **88.3** | GPT 5.6 Sol：88.8；Fable 5 / Opus 4.8：84.6 | K3 用 KimiCode；其他模型取各 harness 最佳；Fable 5 与 Opus 4.8 同分（均为 AA Terminus 2 口径），建议与原始榜单复核 |
-| Kimi Code Bench 2.0 | 72.9 | — | K3 同时测了 KimiCode 与 Claude Code 两种 harness；72.9 对应的具体 harness 待查官方原表确认；官方脚注注明 GPT 5.6 Sol 有 10% 任务触发其 cyber guard |
+| FrontierSWE | **81.2** | Fable 5：86.6；GPT 5.6 Sol：71.3 | K3 用 Kimi Code harness |
+| Program Bench | **77.8** | GPT 5.6 Sol：77.6；Fable 5：76.8 | K3 用 Kimi Code |
+| Terminal-Bench 2.1 | **88.3** | GPT 5.6 Sol：88.8；Fable 5：88.0；Opus 4.8：84.6 | K3 用 Kimi Code；其他模型取各 harness 最佳（官方完整表：Fable 5 为 88.0、Opus 4.8 为 84.6，修正了早期第三方录入的两者同分 84.6 之误） |
+| Kimi Code Bench 2.0 | 72.9 | Fable 5：76.9；Opus 4.8：71.7；GPT 5.6 Sol：64.8 | **72.9 为 Kimi Code harness 成绩；Claude Code harness 下为 73.7**（官方模型卡确认）；GPT 5.6 Sol 有 10/80 任务触发其 cyber guard |
 | DeepSWE | 67.5 | GPT 5.6 Sol：73.0；Fable 5：70.0 | **K3 落后项**；DeepSWE v1.1 任务；mini-SWE-agent harness 下为 67.3 |
-| MLS Bench Lite | 48.3 | — | — |
-| SWE Marathon（长程） | **42.0（第一）** | Opus 4.8：40.0；GPT 5.6 Sol：39.0；Fable 5：35.0 | K3 与 Claude 系用 Claude Code harness；官方采用 H20 校准的 v1.1 任务分支（Docker 镜像、性能门限与参考 oracle 按 H20 重校准，正确性与反作弊校验不变）；Fable 5 在该评测中 35% 任务触发 fallback |
-| PostTrain Bench | 36.6 | — | 三次运行平均，max 思考档；官方在 H20 上运行（官方设置为 H100） |
+| MLS Bench Lite | 48.3 | Fable 5：49.9 | — |
+| SWE Marathon（长程） | **42.0（第一）** | Opus 4.8：40.0；GPT 5.6 Sol：39.0；Fable 5：35.0 | K3 与 Claude 系用 Claude Code harness；官方采用 H20 校准分支（v1.1 发布前的 7 月 9 日版任务，Docker 镜像、性能门限与参考 oracle 按 H20 重校准，正确性与反作弊校验不变）；Fable 5 在该评测中 35% 任务触发 fallback |
+| PostTrain Bench | 36.6 | Fable 5：41.4 | 三次运行平均，max 思考档；官方在 H20 上运行（官方设置为 H100） |
 
 **规律**：K3 的优势集中在**长程、需持续修正**的工程任务（SWE Marathon 第一），单次编程题（DeepSWE）仍落后于两款最强闭源模型。
 
@@ -217,33 +228,33 @@ AttnRes 的思路：让模型**根据当前层的需求，跨深度选择性读�
 | --- | --- | --- |
 | Terminal-Bench 2.1 | 88.3 | 见 6.1（重复列出，不计入总数） |
 | MCP Atlas | 84.2 | 500 任务公开子集，100 轮上限，Gemini 3.1 Pro 担任评委 |
-| Toolathlon-Verified | 73.2 | — |
-| AutomationBench | 30.8 | 600 任务公开子集；AA 口径下 K3 排名第一 |
+| Toolathlon-Verified | 76.5 | 官方完整表数据（早期第三方录入为 73.2） |
+| AutomationBench | 30.8 | 600 任务公开子集；该口径下 K3 排名第一（Fable 5：29.1；GPT 5.6 Sol：29.7） |
 
 ### 6.4 生产力与知识工作（5 项）
 
 | 基准 | K3 得分 | 备注 |
 | --- | --- | --- |
-| GDPval-AA v2 | 1668（Elo） | Fable 5：1760；GPT 5.6 Sol：1748；领先 Opus 4.8 / GPT 5.5 / GLM-5.2 |
-| AA-Briefcase | 1548（Elo） | 仅次于 Fable 5；比 K2.6 提升 732 分 |
+| GDPval-AA v2 | 1686（Elo） | Fable 5：1747；GPT 5.6 Sol：1736；领先 Opus 4.8（1593）/ GPT 5.5（1491）/ GLM-5.2（1510）。官方完整表数据（早期第三方录入为 1668） |
+| AA-Briefcase | 1548（Elo） | 仅次于 Fable 5（1583）；比 K2.6 提升 732 分 |
 | DECK-Bench | 73.5 | — |
 | OfficeQA Pro | 63.3 | 全 PDF 语料以图片形式提供，无机器可读文本 |
 | SpreadsheetBench 2 | 34.8 | — |
 
 ### 6.5 Agent 综合能力（2 项）
 
-| 基准 | K3 得分 |
-| --- | --- |
-| Job Bench | 52.9 |
-| APEX-Agents | 37.6 |
+| 基准 | K3 得分 | 备注 |
+| --- | --- | --- |
+| Job Bench | 54.3 | 官方完整表数据（早期第三方录入为 52.9）；Fable 5：57.4 |
+| APEX-Agents | 41.0 | 官方完整表数据（早期第三方录入为 37.6）；Fable 5：43.3 |
 
 ### 6.6 推理（3 项）
 
 | 基准 | K3 得分 | 关键对比 |
 | --- | --- | --- |
-| GPQA-Diamond | 93.5 | GPT 5.6 Sol：94.1；DeepSeek V4 Pro：90.1 |
-| HLE-Full（无工具） | 43.5 | — |
-| HLE-Full（带工具） | **56.0** | DeepSeek V4 Pro：37.7 |
+| GPQA-Diamond | 93.5 | GPT 5.6 Sol：94.1；DeepSeek V4 Pro：90.1（第三方来源） |
+| HLE-Full（无工具） | 43.5 | Fable 5：53.3 |
+| HLE-Full（带工具） | **56.0** | DeepSeek V4 Pro：37.7（第三方来源）；GPT 5.6 Sol：58.0 |
 
 ### 6.7 多模态理解（8 项）
 
@@ -258,16 +269,17 @@ AttnRes 的思路：让模型**根据当前层的需求，跨深度选择性读�
 | WorldVQA ForceAnswer | 51.0 | — |
 | ZeroBench Main | 23.0 | **41.0** |
 
-> 多模态评测除 ZeroBench（官方设置、运行 5 次）外均为 3 次运行平均；MMMU-Pro 遵循官方协议，图片前置。PerceptionBench 已有公开介绍页（kimi.com/blog/perception-bench）。
+> 多模态评测除 ZeroBench（官方设置、运行 5 次，pass@5）外均为 3 次运行平均；MMMU-Pro 遵循官方协议，图片前置。PerceptionBench 已有公开介绍页（kimi.com/blog/perception-bench）。
 
 ### 6.8 评测口径注意事项
 
-1. 各模型 harness 不同（KimiCode / Claude Code / Codex / Terminus 2），换 harness 结果可能变化。
+1. 各模型 harness 不同（Kimi Code / Claude Code / Codex / Terminus 2），换 harness 结果可能变化。
 2. Claude Fable 5 部分成绩由第三方评测，且在 Claude Code harness 下被其使用策略拒绝的请求会**自动 fallback 到 Opus 4.8**（SWE Marathon 中 fallback 比例达 35%）。
 3. GPT 5.5 在 KCB 2.0 中使用 "xhigh" 设置而非 max。
 4. BrowseComp 的 91.2 使用了上下文压缩策略，与"1M 原生上下文直跑"（90.4）是两种条件。
 5. 计数口径：6.1 八项 + 6.2 两项 + 6.3 三项（Terminal-Bench 2.1 与 6.1 重复不计）+ 6.4 五项 + 6.5 两项 + 6.6 三项 + 6.7 八项 = 31 项独立基准。
 6. 部分官方评测在 H20 而非原始 H100 环境下运行（SWE Marathon 为 H20 校准分支，PostTrain Bench 在 H20 运行），跨硬件对比需注意。
+7. 本文以官方模型卡完整评测表为准校正了早期第三方录入的若干数据（Terminal-Bench 对比分、Toolathlon、GDPval-AA、Job Bench、APEX-Agents 等），逐项差异见各表备注。
 
 ---
 
@@ -283,7 +295,7 @@ AttnRes 的思路：让模型**根据当前层的需求，跨深度选择性读�
 
 - **智能指数 57 分**：与 Claude Opus 4.8、GPT-5.5 同档，仍落后于 Fable 5 与 GPT 5.6 Sol。
 - **成本**：单任务成本约 **$0.94**，与 GPT 5.6 Sol 相当，约为 Opus 4.8 的一半；token 效率比前代提升 21%。
-- GDPval-AA v2 Elo 1668，优于 GLM-5.2、GPT 5.5、Opus 4.8；AutomationBench-AA 排名第一。
+- GDPval-AA v2 Elo 1686（官方引用 AA 口径），优于 GLM-5.2、GPT 5.5、Opus 4.8；AutomationBench 排名第一。
 
 ### 7.3 媒体与行业观点
 
@@ -389,7 +401,7 @@ curl https://api.moonshot.cn/v1/chat/completions \
 ### 9.3 思考力度（reasoning_effort）
 
 - K3 **始终开启思考模式**，通过顶层 `reasoning_effort` 配置；**不要**使用 K2.x 的 `thinking` 参数。
-- 支持 `"low"` / `"high"` / `"max"` 三档，`"max"` 为默认（首发时仅 max 档，low / high 已随后开放）。
+- 支持 `"low"` / `"high"` / `"max"` 三档，`"max"` 为默认（官方模型卡与 quickstart 确认）。
 
 ```python
 completion = client.chat.completions.create(
@@ -515,11 +527,13 @@ completion = client.chat.completions.create(
 
 ## 十二、部署、开源与生态
 
-### 12.1 权重与协议
+### 12.1 权重与协议（已发布）
 
-- **发布**：完整权重与技术报告于 2026-07-27 发布，官方仓库为 Hugging Face [`moonshotai/Kimi-K3`](https://huggingface.co/moonshotai/Kimi-K3)（发布前为占位倒计时页）。
-- **协议**：以模型卡与仓库内 LICENSE 文件为准；预期与 K2 系列一致为 **Modified MIT**（免费商用授权），**商用前请阅读正式协议原文**。
-- **权重体积**：第三方报道约 594GB（原生 MXFP4 safetensors）；社区 GGUF 量化版本通常在发布后数日出现，非官方提供。
+- **发布**：完整权重与技术报告已于 2026-07-27 发布，官方仓库为 Hugging Face [`moonshotai/Kimi-K3`](https://huggingface.co/moonshotai/Kimi-K3)（safetensors 格式，含自定义推理代码）。
+- **协议**：**Kimi K3 License**（代码与权重同一协议）。注意这是月之暗面的自定义协议，并非此前外界预期的 Modified MIT——商用、微调、衍生模型再分发前务必阅读协议原文。
+- **官方推理支持**：vLLM（recipes）、SGLang（cookbook）、TokenSpeed（recipes）随权重同步发布；Transformers 可通过 `trust_remote_code=True` 加载。
+- **托管推理**：Together AI 等第三方推理服务商已上线 K3；OpenRouter 同步可用。
+- **权重体积**：第三方报道约 594GB（原生 MXFP4）；社区量化版本（GGUF 等）由社区提供，官方 HF 模型树下已出现多个量化与微调衍生版本。
 
 ### 12.2 自部署硬件估算
 
@@ -530,23 +544,23 @@ completion = client.chat.completions.create(
 | 实验性最低 | 第三方报道 8× H100 80GB 可加载（非生产建议） |
 | 消费级硬件 | 单张 RTX 5090 / 普通工作站**无法**运行完整模型 |
 
-### 12.3 权重发布后需确认的三件事
+### 12.3 部署前仍需自行确认的事项
 
-1. 模型授权是否允许商业使用与衍生模型、是否允许微调（以正式 LICENSE 为准）；
-2. vLLM / SGLang 等框架的 KDA 与前缀缓存支持进度（官方 vLLM KDA prefill-cache 实现随模型发布）；
-3. 官方是否同步提供量化权重、硬件需求说明与分布式部署示例。
+1. **通读 Kimi K3 License 全文**：确认商用、微调、衍生模型与再分发条款（与 K2 的 Modified MIT 不可直接类比）；
+2. 核对所用推理框架版本的 KDA 与前缀缓存支持（优先官方 vLLM / SGLang recipes）；
+3. 评估社区量化版本的精度损失——官方权重本身已是 MXFP4 量化感知训练产物，二次量化（如 GGUF Q2/Q4）会进一步损失精度。
 
 ### 12.4 相关开源资产（已发布）
 
 - **Kimi Linear**（KDA 的 48B-A3B 验证模型）：MIT 协议，Base 与 Instruct 检查点已在 Hugging Face 发布；KDA kernel 已并入 FLA（flash-linear-attention）；vLLM 可直接 `serve`。
-- 论文：arXiv:2510.26692《Kimi Linear: An Expressive, Efficient Attention Architecture》。
+- 论文：arXiv:2510.26692《Kimi Linear: An Expressive, Efficient Attention Architecture》；Attention Residuals 论文已随 K3 发布公开。
 
 ---
 
 ## 十三、常见问题 FAQ
 
 **Q1：Kimi K3 的 2.8T 参数是否每次推理都参与计算？**
-不是。MoE 架构下每个 token 仅激活 896 个专家中的 16 个（激活参数约 50B），单次推理计算量远小于总参数规模；但部署仍需容纳完整权重。
+不是。MoE 架构下每个 token 仅激活 896 个路由专家中的 16 个（另有 2 个共享专家常驻），激活参数 104B（官方模型卡），单次推理计算量远小于总参数规模；但部署仍需容纳完整权重。
 
 **Q2：K3 与 K2.7 Code 是什么关系？**
 K3 是通用旗舰，不是 K2.7 Code 的替代者。K2.7 Code 继续服务编程专精场景（更快、更经济），K3 面向难、跨领域、超长上下文的复杂任务。
@@ -561,10 +575,10 @@ K3 改用顶层 `reasoning_effort`（low / high / max，max 为默认）。`thin
 容量是上限。输入越长，首 token 延迟、推理时间与费用越高。建议保持前缀稳定以命中缓存（编程负载命中率 >90%）。
 
 **Q6：现在能本地部署吗？**
-权重于 2026-07-27 在 Hugging Face（`moonshotai/Kimi-K3`）发布后可下载。但官方建议 64+ 加速卡 Supernode，个人与普通企业更现实的选择仍是官方 API、OpenRouter 或推理合作伙伴。
+可以下载了——权重已于 2026-07-27 在 Hugging Face（`moonshotai/Kimi-K3`）发布（Kimi K3 License）。但官方建议 64+ 加速卡 Supernode，个人与普通企业更现实的选择仍是官方 API、OpenRouter 或 Together AI 等推理服务商。
 
 **Q7：K3 的评测能直接和 GPT 5.6 Sol / Fable 5 比吗？**
-需谨慎。各模型使用不同 harness（KimiCode / Claude Code / Codex），部分 Claude 成绩含 fallback（SWE Marathon 中达 35%），运行次数、硬件（部分为 H20 校准环境）与工具条件也不完全一致。官方结论是"已进入前沿竞争区间，但整体体验仍落后"。
+需谨慎。各模型使用不同 harness（Kimi Code / Claude Code / Codex），部分 Claude 成绩含 fallback（SWE Marathon 中达 35%），运行次数、硬件（部分为 H20 校准环境）与工具条件也不完全一致。官方结论是"已进入前沿竞争区间，但整体体验仍落后"。
 
 ---
 
@@ -573,15 +587,15 @@ K3 改用顶层 `reasoning_effort`（low / high / max，max 为默认）。`thin
 | 资料 | 链接 |
 | --- | --- |
 | 官方技术博客 | https://www.kimi.com/zh-cn/blog/kimi-k3 |
+| Hugging Face 模型卡（含完整评测表与技术报告入口） | https://huggingface.co/moonshotai/Kimi-K3 |
 | API 快速开始 | https://platform.kimi.com/docs/guide/kimi-k3-quickstart |
-| Hugging Face 权重仓库 | https://huggingface.co/moonshotai/Kimi-K3 |
 | Moonshot AI 官网 | https://www.moonshot.ai/ |
 | Kimi Linear 论文（KDA 技术基础） | https://arxiv.org/abs/2510.26692 |
 | Kimi Linear 开源仓库 | https://github.com/MoonshotAI/Kimi-Linear |
 | PerceptionBench 介绍页 | https://www.kimi.com/blog/perception-bench |
-| DataLearner 模型卡片（31 项评测结构化） | https://www.datalearner.com/ai-models/pretrained-models/kimi-k3 |
+| DataLearner 模型卡片（第三方结构化录入） | https://www.datalearner.com/ai-models/pretrained-models/kimi-k3 |
 | iThome 报道 | https://www.ithome.com.tw/news/177376 |
 
 ---
 
-*文档整理时间：2026-07-18；v2.2 修订：2026-07-27（权重发布日）。基于官方技术博客、API 文档、Kimi Linear 论文及公开第三方评测整理；官方评测数据为厂商自报口径，横向对比时请注意各模型使用的 harness、硬件环境与评测条件差异。权重协议与激活参数等细节以 2026-07-27 发布的模型卡及技术报告为最终依据。*
+*文档整理时间：2026-07-18；v3.0 修订：2026-07-28（权重与技术报告发布后最终核查）。基于官方技术博客、官方模型卡、API 文档、Kimi Linear 论文及公开第三方评测整理；官方评测数据为厂商自报口径，横向对比时请注意各模型使用的 harness、硬件环境与评测条件差异。*
