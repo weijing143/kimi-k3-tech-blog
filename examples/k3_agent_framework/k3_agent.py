@@ -248,10 +248,19 @@ class K3Agent:
         if total <= self.max_context_tokens:
             return messages
 
-        system = [m for m in messages if m.get("role") == "system"]
-        rest = [m for m in messages if m.get("role") != "system"]
+        # 只把【开头连续】的 system 消息视为固定前缀；出现在对话中段的 system
+        # 消息（例如动态工具声明）保持原位、参与淘汰，不改变其语义位置
+        prefix: list[dict] = []
+        for m in messages:
+            if m.get("role") == "system":
+                prefix.append(m)
+            else:
+                break
+        rest = messages[len(prefix):]
+
+        # 前缀的 token 成本计入预算（原先漏算，超长 system 会挤爆预算）
         kept: list[dict] = []
-        budget = self.max_context_tokens
+        budget = self.max_context_tokens - self._estimate_tokens(prefix)
         # 从最新往回保留
         for m in reversed(rest):
             cost = self._estimate_tokens([m])
@@ -263,8 +272,16 @@ class K3Agent:
         # 若首条是 tool 消息（其 assistant 被裁掉），继续向后剥离到安全边界
         while kept and kept[0].get("role") == "tool":
             kept.pop(0)
-        logger.info("上下文裁剪：%d → %d 条消息", len(messages), len(system) + len(kept))
-        return system + kept
+        # 同理，若末条是带 tool_calls 的 assistant 但其 tool 结果没保住（理论上
+        # 从尾部连续保留不会发生，防御性处理），剥离该 assistant 避免悬挂调用
+        while kept and kept[-1].get("role") == "assistant" and kept[-1].get("tool_calls"):
+            ids = {tc.get("id") for tc in kept[-1]["tool_calls"]}
+            answered = {m.get("tool_call_id") for m in kept if m.get("role") == "tool"}
+            if ids <= answered:
+                break
+            kept.pop()
+        logger.info("上下文裁剪：%d → %d 条消息", len(messages), len(prefix) + len(kept))
+        return prefix + kept
 
     @staticmethod
     def _estimate_tokens(messages: list[dict]) -> int:
