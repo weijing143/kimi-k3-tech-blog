@@ -47,7 +47,7 @@ class TestMakePrompt(unittest.TestCase):
 
 
 class TestBuildContent(unittest.TestCase):
-    def test_common_prefix_is_exactly_shared_prefix(self):
+    def test_common_prefix_excludes_prompt_body(self):
         """跨请求公共前缀必须被限制在 shared prefix 与极短请求标识头内、
         不含 prompt 正文——否则前缀缓存实验无有效对照。"""
         prefix = "SHARED " * 100
@@ -67,7 +67,9 @@ class TestBuildContent(unittest.TestCase):
         self.assertLess(common, prompt_start)
         self.assertNotEqual(c1, c2)  # 请求内容必须有唯一尾部
 
-    def test_no_shared_prefix_means_no_common_prefix(self):
+    def test_no_shared_prefix_still_unique_tails(self):
+        """shared_prefix 为空时两请求仍有短公共前缀（标识头相同部分），
+        但正文必须因唯一标识而不同。"""
         c1 = build_content("", make_prompt(100), "req-1")
         c2 = build_content("", make_prompt(100), "req-2")
         self.assertFalse(c1.startswith("SHARED"))
