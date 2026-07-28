@@ -86,17 +86,37 @@ def make_prompt(n_tokens_approx: int) -> str:
     return (words * reps)[: int(n_tokens_approx * 3.5)]
 
 
+def build_content(shared_prefix: str, prompt: str, unique_id: str) -> str:
+    """拼装请求内容。唯一标识放在共享前缀之后、正文之前：
+
+    这样跨请求的公共前缀恰好等于 shared_prefix——否则所有请求内容完全一致，
+    整段都会成为公共前缀，--shared-prefix 的长度变化对缓存命中没有影响，
+    前缀缓存实验（on/off 或不同长度对比）就不存在有效对照。
+    """
+    parts = []
+    if shared_prefix:
+        parts.append(shared_prefix)
+    parts.append(f"[request-id: {unique_id}]")
+    parts.append(prompt)
+    parts.append("用一句话总结上文。")
+    return "\n\n".join(parts)
+
+
 async def one_request(client: openai.AsyncOpenAI, args, prompt: str,
-                      shared_prefix: str) -> Sample:
+                      shared_prefix: str, request_id: str) -> Sample:
     s = Sample()
-    content = shared_prefix + "\n\n" + prompt + "\n\n用一句话总结上文。"
+    content = build_content(shared_prefix, prompt, request_id)
+    # 官方 API 的字段是 max_completion_tokens（Quickstart 明示，默认 131072）；
+    # 老端点只认 max_tokens 时用 --legacy-max-tokens 切换
+    limit_kw = ({"max_tokens": args.max_output} if args.legacy_max_tokens
+                else {"max_completion_tokens": args.max_output})
     t0 = time.perf_counter()
     try:
         if args.no_stream:
             resp = await client.chat.completions.create(
                 model=args.model,
                 messages=[{"role": "user", "content": content}],
-                max_tokens=args.max_output,
+                **limit_kw,
             )
             s.e2e = time.perf_counter() - t0
             if resp.usage:
@@ -108,9 +128,9 @@ async def one_request(client: openai.AsyncOpenAI, args, prompt: str,
             stream = await client.chat.completions.create(
                 model=args.model,
                 messages=[{"role": "user", "content": content}],
-                max_tokens=args.max_output,
                 stream=True,
                 stream_options={"include_usage": True},
+                **limit_kw,
             )
             first = True
             async for chunk in stream:
@@ -137,14 +157,15 @@ async def run_level(client: openai.AsyncOpenAI, args, concurrency: int) -> Level
     shared_prefix = make_prompt(args.shared_prefix) if args.shared_prefix else ""
     sem = asyncio.Semaphore(concurrency)
 
-    async def guarded():
+    async def guarded(idx: int):
         async with sem:
-            return await one_request(client, args, prompt, shared_prefix)
+            return await one_request(client, args, prompt, shared_prefix,
+                                     request_id=f"c{concurrency}-{idx}")
 
     result = LevelResult(concurrency=concurrency)
     t0 = time.perf_counter()
     result.samples = await asyncio.gather(
-        *[guarded() for _ in range(args.requests_per_level)]
+        *[guarded(i) for i in range(args.requests_per_level)]
     )
     result.wall_s = time.perf_counter() - t0
     return result
@@ -162,6 +183,8 @@ async def main() -> None:
     p.add_argument("--no-stream", action="store_true")
     p.add_argument("--model", default=os.environ.get("BENCH_MODEL", "moonshotai/Kimi-K3"))
     p.add_argument("--out", default="bench_results.json")
+    p.add_argument("--legacy-max-tokens", action="store_true",
+                   help="用旧字段 max_tokens（官方 API 用默认的 max_completion_tokens）")
     args = p.parse_args()
 
     client = openai.AsyncOpenAI(
@@ -175,8 +198,9 @@ async def main() -> None:
     print("预热 2 个请求 ...")
     warmup_prompt = make_prompt(args.prompt_tokens)
     warmup_prefix = make_prompt(args.shared_prefix) if args.shared_prefix else ""
-    await asyncio.gather(*[one_request(client, args, warmup_prompt, warmup_prefix)
-                           for _ in range(2)])
+    await asyncio.gather(*[one_request(client, args, warmup_prompt, warmup_prefix,
+                                       request_id=f"warmup-{i}")
+                           for i in range(2)])
 
     all_results = []
     for c in args.concurrency:

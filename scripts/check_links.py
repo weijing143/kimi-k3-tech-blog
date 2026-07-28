@@ -37,9 +37,9 @@ def main() -> int:
     if broken:
         print(f"\n发现 {len(broken)} 个死链：")
         for b in broken:
-            print(f"  ✗ {b}")
+            print(f"  FAIL {b}")
         return 1
-    print("未发现死链 ✓")
+    print("未发现死链 OK")
     return 0
 
 
