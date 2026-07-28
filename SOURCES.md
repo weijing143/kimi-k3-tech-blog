@@ -57,7 +57,7 @@
 | `reasoning_effort` low / high / max（默认 max） | [Quickstart](https://platform.kimi.com/docs/guide/kimi-k3-quickstart) | 2026-07-28 | A | 否 |
 | 完整回传 assistant message（reasoning_content + tool_calls） | Quickstart / HF 模型卡 §6 | 2026-07-28 | A | 否 |
 | 视频输入经 Files API 上传引用 | Quickstart 视觉输入文档 | 2026-07-28 | A | 否 |
-| 默认最大输出 131,072 tokens | Quickstart | 2026-07-28 | A | 否 |
+| 默认最大输出 131,072 tokens（`max_completion_tokens`） | Quickstart | 2026-07-28 | A | 否 |
 | 编程负载缓存命中率 >90% | 官方博客（Mooncake 架构） | 2026-07-28 | B | 否 |
 
 ## 5. MoE / KDA 系统实现（LatentMoE 篇 §6、KDA 篇）
@@ -74,8 +74,8 @@
 
 | 数据点 | 证据 | 核对日期 | 等级 | 实测 |
 | --- | --- | --- | --- | --- |
-| k3_agent.py 行为（回传/循环/重试/裁剪/成本） | 按官方文档行为编写 + 9 个离线单元测试（CI 可复跑） | 2026-07-28 | **E（离线测试）** | **部分**（非真实 API 端到端） |
-| bench_serving.py 测量口径 | 5 个离线单元测试（CI 可复跑） | 2026-07-28 | **E（离线测试）** | **部分**（未对真实端点压测） |
+| k3_agent.py 行为（回传/循环/重试/裁剪/成本） | 按官方文档行为编写 + 10 个离线单元测试（CI 可复跑） | 2026-07-28 | **E（离线测试）** | **部分**（非真实 API 端到端） |
+| bench_serving.py 测量口径 | 7 个离线单元测试（CI 可复跑） | 2026-07-28 | **E（离线测试）** | **部分**（未对真实端点压测） |
 | runbook §5 实验 A–E 结果表 | **留空待实测** | — | — | **待填** |
 | runbook §8 第三方发布前估算 | 各来源 URL 已列，全部为权重发布前预测口径 | 2026-07-28 | C/D（已显著标注） | 否 |
 
