@@ -1,0 +1,33 @@
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  unittest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install openai
+      - name: Run k3_agent tests
+        working-directory: examples/k3_agent_framework
+        run: python -m unittest test_k3_agent -v
+      - name: Run bench_serving tests
+        working-directory: examples/k3_selfhost_bench
+        run: python -m unittest test_bench_serving -v
+
+  link-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check relative markdown links
+        run: python scripts/check_links.py
