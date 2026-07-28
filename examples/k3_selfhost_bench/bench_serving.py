@@ -49,12 +49,15 @@ class Sample:
 class LevelResult:
     concurrency: int
     samples: list[Sample] = field(default_factory=list)
+    wall_s: float = 0.0  # 该并发级别整批请求的墙钟时间（由 run_level 记录）
 
     def summary(self) -> dict:
         ok = [s for s in self.samples if s.error is None]
         ttfts = [s.ttft for s in ok if s.ttft is not None]
         tpots = [s.tpot for s in ok if s.tpot is not None]
-        wall = max((s.e2e for s in ok), default=0.0)
+        # 聚合吞吐必须用整批墙钟时间：请求数 > 并发度时存在排队，
+        # 用单请求最大 e2e 会系统性高估吞吐
+        wall = self.wall_s
         total_out = sum(s.output_tokens for s in ok)
         return {
             "concurrency": self.concurrency,
@@ -64,6 +67,7 @@ class LevelResult:
             "ttft_p50_s": round(statistics.median(ttfts), 3) if ttfts else None,
             "tpot_mean_ms": round(statistics.mean(tpots) * 1000, 2) if tpots else None,
             "e2e_mean_s": round(statistics.mean(s.e2e for s in ok), 2) if ok else None,
+            "wall_s": round(wall, 2),
             "agg_output_tps": round(total_out / wall, 1) if wall > 0 else None,
             "prompt_tokens": sum(s.prompt_tokens for s in ok),
             "cached_tokens": sum(s.cached_tokens for s in ok),
@@ -138,9 +142,11 @@ async def run_level(client: openai.AsyncOpenAI, args, concurrency: int) -> Level
             return await one_request(client, args, prompt, shared_prefix)
 
     result = LevelResult(concurrency=concurrency)
+    t0 = time.perf_counter()
     result.samples = await asyncio.gather(
         *[guarded() for _ in range(args.requests_per_level)]
     )
+    result.wall_s = time.perf_counter() - t0
     return result
 
 
@@ -164,9 +170,13 @@ async def main() -> None:
         timeout=600.0,
     )
 
-    # 预热：让权重、kernel、缓存就位，预热结果不计入
+    # 预热：让权重、kernel、缓存就位，预热结果不计入。
+    # 注意固定为 2 个请求——不要复用 run_level（它会跑 requests_per_level 个）
     print("预热 2 个请求 ...")
-    await run_level(client, args, concurrency=1)
+    warmup_prompt = make_prompt(args.prompt_tokens)
+    warmup_prefix = make_prompt(args.shared_prefix) if args.shared_prefix else ""
+    await asyncio.gather(*[one_request(client, args, warmup_prompt, warmup_prefix)
+                           for _ in range(2)])
 
     all_results = []
     for c in args.concurrency:
