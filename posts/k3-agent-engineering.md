@@ -203,6 +203,7 @@ print(agent.usage.summary())
 | 文件 | 内容 |
 | --- | --- |
 | [`examples/k3_agent_framework/k3_agent.py`](../examples/k3_agent_framework/k3_agent.py) | `K3Agent` 核心：完整回传、工具循环、流式、重试、裁剪、成本统计 |
+| [`examples/k3_agent_framework/test_k3_agent.py`](../examples/k3_agent_framework/test_k3_agent.py) | 9 个单元测试：成本统计、裁剪预算与原子性、流式 tool_calls 拼装、工具异常回传 |
 | [`examples/k3_agent_framework/demo.py`](../examples/k3_agent_framework/demo.py) | 两跳工具任务演示（天气 → 计算） |
 | [`examples/k3_agent_framework/requirements.txt`](../examples/k3_agent_framework/requirements.txt) | 依赖锁定 |
 
