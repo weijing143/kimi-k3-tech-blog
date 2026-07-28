@@ -10,7 +10,7 @@
 - 核心规格总表
 - 架构深度解析（KDA / Attention Residuals / Stable LatentMoE）
 - 训练与推理基础设施
-- 完整基准评测（31 项，已按官方模型卡完整评测表校正）
+- 基准评测（31 项，已按官方模型卡评测表校正；官方完整表另含十余项未收录指标）
 - 第三方评测与行业反应
 - 官方案例研究
 - API 完整使用指南
@@ -26,7 +26,8 @@
 - [《Stable LatentMoE 工程解析：Quantile Balancing、EP 通信与 896 专家路由》](./posts/latentmoe-engineering.md) —— LatentMoE 原理、QB 无辅助损失均衡、vLLM EP 后端与路由健康诊断
 - [《Kimi K3 License 实务：商用、微调和再分发的条款对照与部署清单》](./posts/k3-license-practice.md) —— 逐条拆解 + 场景决策矩阵 + 合规清单，纠正"K3 是 MIT"的误传
 - [《Kimi K3 自部署实验手册：从 8× H100 到 64 卡 Supernode》](./posts/k3-selfhost-runbook.md) —— 显存算术、启动命令、压测方法学与留空结果表，配套脚本见 [examples/k3_selfhost_bench/](./examples/k3_selfhost_bench/)
-- [《发布帖文案（长版 + 短版）》](./posts/release-announcement.md) —— 仓库对外发布用的介绍文案
+
+另附：[《发布帖文案（长版 + 短版）》](./posts/release-announcement.md) —— 仓库对外发布用的介绍文案（非专题）
 
 ## 资料来源
 
