@@ -186,6 +186,27 @@ class TestRunLoopToolErrors(unittest.TestCase):
         tool_msgs = [m for m in a.last_messages if m["role"] == "tool"]
         self.assertIn("未注册", tool_msgs[0]["content"])
 
+    def test_invalid_json_args_not_executed(self):
+        """参数非法 JSON 时：不得调用 handler，应回传 ERROR tool 消息。"""
+        a = make_agent()
+        calls_made = []
+        turns = [
+            assistant_with_tool("c1", name="f", args="{not valid json"),
+            msg("assistant", "重试后回答"),
+        ]
+
+        def handler(args):
+            calls_made.append(args)
+            return "ok"
+
+        with patch.object(a, "chat", side_effect=lambda *a, **kw: turns.pop(0)):
+            list(a.run([msg("user", "hi")], tools=[], tool_handlers={"f": handler}))
+        self.assertEqual(calls_made, [])  # handler 未被调用
+        tool_msgs = [m for m in a.last_messages if m["role"] == "tool"]
+        self.assertEqual(len(tool_msgs), 1)
+        self.assertIn("不是合法 JSON", tool_msgs[0]["content"])
+        self.assertIn("ERROR", tool_msgs[0]["content"])
+
 
 if __name__ == "__main__":
     unittest.main()

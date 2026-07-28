@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import unittest
 
-from bench_serving import LevelResult, Sample, make_prompt
+from bench_serving import LevelResult, Sample, build_content, make_prompt
 
 
 class TestSample(unittest.TestCase):
@@ -44,6 +44,33 @@ class TestMakePrompt(unittest.TestCase):
         p1, p2 = make_prompt(1000), make_prompt(1000)
         self.assertEqual(p1, p2)  # 内容固定才能跨并发级别对比
         self.assertEqual(len(p1), 3500)  # 1000 token × 3.5 字符
+
+
+class TestBuildContent(unittest.TestCase):
+    def test_common_prefix_is_exactly_shared_prefix(self):
+        """跨请求的公共前缀必须恰好等于 shared_prefix——否则前缀缓存实验无有效对照。"""
+        prefix = "SHARED " * 100
+        prompt = make_prompt(100)
+        c1 = build_content(prefix, prompt, "req-1")
+        c2 = build_content(prefix, prompt, "req-2")
+        # 两个请求的公共前缀
+        common = 0
+        for a, b in zip(c1, c2):
+            if a != b:
+                break
+            common += 1
+        # 公共部分 = shared_prefix + "\n\n" + 两个 id 的相同字符（"req-"），
+        # 关键是必须短于 prompt 主体的起始位置（prompt 不进入公共前缀）
+        prompt_start = len(prefix) + 2 + len("[request-id: req-1]") + 2
+        self.assertGreaterEqual(common, len(prefix) + 2)
+        self.assertLess(common, prompt_start)
+        self.assertNotEqual(c1, c2)  # 请求内容必须有唯一尾部
+
+    def test_no_shared_prefix_means_no_common_prefix(self):
+        c1 = build_content("", make_prompt(100), "req-1")
+        c2 = build_content("", make_prompt(100), "req-2")
+        self.assertFalse(c1.startswith("SHARED"))
+        self.assertNotEqual(c1, c2)
 
 
 if __name__ == "__main__":

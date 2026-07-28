@@ -211,10 +211,22 @@ class K3Agent:
 
             for call in calls:
                 name = call["function"]["name"]
+                raw_args = call["function"].get("arguments") or "{}"
                 try:
-                    args = json.loads(call["function"].get("arguments") or "{}")
+                    args = json.loads(raw_args)
                 except json.JSONDecodeError:
-                    args = {}
+                    # 非法 JSON 不得静默改为 {} 照常执行——参数语义已不可信，
+                    # 直接回传错误让模型重试，与文档承诺的行为一致
+                    result = (f"ERROR: 工具 {name} 的参数不是合法 JSON，未执行。"
+                              f"请重新生成合法的 arguments。原始内容：{raw_args[:200]!r}")
+                    logger.error("工具 %s 参数 JSON 解析失败：%s", name, raw_args[:200])
+                    history.append({
+                        "role": "tool",
+                        "tool_call_id": call["id"],
+                        "name": name,
+                        "content": result,
+                    })
+                    continue
                 handler = tool_handlers.get(name)
                 if handler is None:
                     result = f"ERROR: 未注册的工具 {name!r}"
