@@ -48,7 +48,8 @@ class TestMakePrompt(unittest.TestCase):
 
 class TestBuildContent(unittest.TestCase):
     def test_common_prefix_is_exactly_shared_prefix(self):
-        """跨请求的公共前缀必须恰好等于 shared_prefix——否则前缀缓存实验无有效对照。"""
+        """跨请求公共前缀必须被限制在 shared prefix 与极短请求标识头内、
+        不含 prompt 正文——否则前缀缓存实验无有效对照。"""
         prefix = "SHARED " * 100
         prompt = make_prompt(100)
         c1 = build_content(prefix, prompt, "req-1")
