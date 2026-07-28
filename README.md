@@ -2,6 +2,19 @@
 
 本仓库是对 Moonshot AI（月之暗面）于 2026-07-16 发布的 **Kimi K3** 模型的技术资料整理，仅供个人学习参考。权重与技术报告已于 2026-07-27 发布（Hugging Face `moonshotai/Kimi-K3`，Kimi K3 License）。
 
+## 阅读路径
+
+按你的目标选路线，建议遵循"先看证据等级，再读对应文章，最后运行示例"的顺序：
+
+| 你的目标 | 推荐阅读顺序 |
+| --- | --- |
+| 初次了解 K3 | [README](./README.md) → [SOURCES.md](./SOURCES.md)（证据等级）→ [主文档](./kimi-k3-tech-blog.md) 的 TL;DR、规格表、架构、限制与选型 |
+| 理解模型原理 | 主文档架构与训练章节 → [KDA 专题](./posts/kda-from-formula-to-vllm.md) → [LatentMoE 专题](./posts/latentmoe-engineering.md) → 对照 [SOURCES.md](./SOURCES.md) 证据等级 |
+| 接入 API / 构建 Agent | 主文档 API 章节 → [Agent 工程实践](./posts/k3-agent-engineering.md) → [examples/k3_agent_framework](./examples/k3_agent_framework/)（README、demo、源码、测试） |
+| 自部署 / 性能验证 | 主文档部署章节 → [自部署实验手册](./posts/k3-selfhost-runbook.md) → [examples/k3_selfhost_bench](./examples/k3_selfhost_bench/)（注意：留空结果表是方法模板，不是实测结论） |
+| 评估商用与再分发 | [License 实务](./posts/k3-license-practice.md) → 官方 [Kimi K3 License 原文](https://huggingface.co/moonshotai/Kimi-K3/raw/main/LICENSE) → [SOURCES.md](./SOURCES.md) License 条目 |
+| 参与维护 | README → [SOURCES.md](./SOURCES.md) → [CONTRIBUTING.md](./CONTRIBUTING.md) → Issue 模板 |
+
 ## 内容
 
 主文档：[kimi-k3-tech-blog.md](./kimi-k3-tech-blog.md)
@@ -48,7 +61,7 @@
 需要注意的边界：
 
 - 基准分数为**官方自报口径**，其中十余项已逐项比对官方完整表，其余为同源转录；
-- 示例代码通过 14 个**离线单元测试**（CI 自动复跑，见 Actions 页），但**未构成**对真实 K3 API 与自部署 vLLM/SGLang 环境的端到端验证；
+- 示例代码通过 17 个**离线单元测试**（CI 自动复跑，见 Actions 页），但**未构成**对真实 K3 API 与自部署 vLLM/SGLang 环境的端到端验证；
 - 自部署手册的结果表全部留空待实测，请勿引用为空数据。
 
 ## 许可证
