@@ -89,9 +89,10 @@ def make_prompt(n_tokens_approx: int) -> str:
 def build_content(shared_prefix: str, prompt: str, unique_id: str) -> str:
     """拼装请求内容。唯一标识放在共享前缀之后、正文之前：
 
-    这样跨请求的公共前缀恰好等于 shared_prefix——否则所有请求内容完全一致，
-    整段都会成为公共前缀，--shared-prefix 的长度变化对缓存命中没有影响，
-    前缀缓存实验（on/off 或不同长度对比）就不存在有效对照。
+    这样跨请求的公共前缀被限制在 shared_prefix 与极短的请求标识头
+    （"[request-id: " 的相同部分）之内，不包含 prompt 正文——否则所有请求
+    内容完全一致，整段都会成为公共前缀，--shared-prefix 的长度变化对缓存
+    命中没有影响，前缀缓存实验（on/off 或不同长度对比）就不存在有效对照。
     """
     parts = []
     if shared_prefix:
