@@ -1,12 +1,47 @@
 name: 实测数据提交
-description: 提交自部署 / API 压测的实测数据（用于补充实验手册留空表格）
+description: 提交本人 / 本项目实测，或登记可追溯的外部公开实测
 title: "[data] "
 labels: ["data"]
 body:
   - type: markdown
     attributes:
       value: |
-        感谢提供实测数据！**没有环境上下文的数字无法合并**，请完整填写以下各项。
+        感谢提供实测数据！外部数据进入实测索引，本项目实际执行的数据才能填写结果表。**没有环境上下文的数字无法合并**，请完整填写以下各项。
+  - type: dropdown
+    id: source_type
+    attributes:
+      label: 数据类型
+      description: 外部数据不得标为本项目实测
+      options:
+        - 本人 / 本项目实测
+        - 外部权威或社区公开实测
+    validations:
+      required: true
+  - type: dropdown
+    id: reproduction_status
+    attributes:
+      label: 复现状态
+      options:
+        - 外部实测，项目未复现
+        - 本项目复现
+        - 本项目与外部来源交叉复现
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: 原始来源
+      description: 原始测试页面、仓库、日志或结果文件链接；本人实测请说明原始输出的提供方式
+      placeholder: "例：https://.../benchmark-results.json"
+    validations:
+      required: true
+  - type: input
+    id: model_version
+    attributes:
+      label: 模型版本 / 权重哈希
+      description: 填写可精确识别被测权重的版本、revision 或哈希
+    validations:
+      required: true
   - type: input
     id: hardware
     attributes:
@@ -35,8 +70,15 @@ body:
     id: results
     attributes:
       label: 实测结果
-      description: 贴入压测结果（建议附 bench_serving.py 输出的 JSON），并说明对应实验手册中的哪个实验（A/B/C/D/E）
+      description: 贴入必要的结果摘要并链接原始数据，说明对应实验手册中的哪个实验（A/B/C/D/E）
       placeholder: "实验 A：并发 1/4/8/16 的 TTFT / TPOT / 吞吐 ..."
+    validations:
+      required: true
+  - type: textarea
+    id: workload
+    attributes:
+      label: 负载与指标定义
+      description: 输入/输出长度、并发数、请求数、预热方法、错误率，以及 TTFT/TPOT/吞吐的计算口径
     validations:
       required: true
   - type: input
@@ -51,7 +93,11 @@ body:
     attributes:
       label: 确认
       options:
-        - label: 以上数据为本人实测，非转载第三方结果
+        - label: 我已如实标注数据来源和复现状态，未将外部数据写成本项目实测
           required: true
-        - label: 我理解数据将以 CC BY-NC 4.0 协议并入本仓库
+        - label: 该数据对应公开权重发布后的真实测试，不是发布前预测或估算
+          required: true
+        - label: 本人原创数据可按仓库协议使用；引用外部数据时只提交必要事实摘要与链接，并遵守来源许可条件
+          required: true
+        - label: 我理解本人提交的原创内容将以 CC BY-NC 4.0 协议并入本仓库
           required: true
