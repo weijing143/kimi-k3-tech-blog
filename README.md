@@ -35,6 +35,7 @@
 ## 专题文章（posts/）
 
 - [《Kimi K3 Agent 工程实践：完整回传 reasoning / tool history 的可靠调用框架》](./posts/k3-agent-engineering.md) —— 配套可运行代码见 [examples/k3_agent_framework/](./examples/k3_agent_framework/)
+- [《开源三巨头横评：Kimi K3 vs DeepSeek V4 Pro vs GLM-5.2》](./posts/k3-vs-v4pro-vs-glm52.md) —— 规格/基准/价格/吞吐横向对比 + 决策框架，标注"第三方评测 vs 官方自报"
 - [《Attention Residuals 工程解析：残差连接还不够——让每层自己决定"读谁"》](./posts/attnres-engineering.md) —— 伪查询注意力 over depth、Full/Block 版内存权衡、官方伪代码逐行解读
 - [《KDA 不是"线性注意力"这么简单：从递推公式到 vLLM Prefix Cache》](./posts/kda-from-formula-to-vllm.md) —— 从 delta rule 推导到 FLA / vLLM 源码追踪
 - [《Stable LatentMoE 工程解析：Quantile Balancing、EP 通信与 896 专家路由》](./posts/latentmoe-engineering.md) —— LatentMoE 原理、QB 无辅助损失均衡、vLLM EP 后端与路由健康诊断
