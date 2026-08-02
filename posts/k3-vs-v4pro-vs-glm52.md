@@ -1,6 +1,6 @@
 # 开源三巨头横评：Kimi K3 vs DeepSeek V4 Pro vs GLM-5.2
 
-> 写作日期：2026-08-02｜姊妹篇：本仓库 K3 各专题、[SOURCES.md](./SOURCES.md)
+> 写作日期：2026-08-02｜姊妹篇：本仓库 K3 各专题、[SOURCES.md](../SOURCES.md)
 > **口径声明**：三模型对比数据主要来自 [DeepInfra 对比博客](https://deepinfra.com/blog/kimi-k3-vs-deepseek-v4-pro-vs-glm-5-2)（2026-07-28 发布，2026-08-02 抓取）与 [EmpirioLabs 价格对比](https://empiriolabs.ai/blog/kimi-k3-vs-glm-5-2-vs-deepseek-v4-pro)（2026-08-02 抓取）；K3 侧数字与主文档 §六（官方模型卡口径）交叉核对，不一致处以主文档/官方为准并标注。**AA Index、SWE-bench、GPQA、LiveCodeBench、吞吐量等均为第三方评测（Artificial Analysis / BenchLM / 供应商自测）**，非厂商官方自报；厂商自报与第三方评测已分列。
 
 ---
