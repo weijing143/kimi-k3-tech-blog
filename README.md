@@ -17,7 +17,7 @@
 | 接入 API / 构建 Agent | 主文档 API 章节 → [Agent 工程实践](./posts/k3-agent-engineering.md) → [examples/k3_agent_framework](./examples/k3_agent_framework/)（README、demo、源码、测试） |
 | 自部署 / 性能验证 | 主文档部署章节 → [自部署实验手册](./posts/k3-selfhost-runbook.md) → [examples/k3_selfhost_bench](./examples/k3_selfhost_bench/)（注意：留空结果表是方法模板，不是实测结论） |
 | 评估商用与再分发 | [License 实务](./posts/k3-license-practice.md) → 官方 [Kimi K3 License 原文](https://huggingface.co/moonshotai/Kimi-K3/raw/main/LICENSE) → [SOURCES.md](./SOURCES.md) License 条目 |
-| 参与维护 | README → [SOURCES.md](./SOURCES.md) → [CONTRIBUTING.md](./CONTRIBUTING.md) → Issue 模板 |
+| 参与维护 | README → [核验清单](./VERIFICATION.md) → [SOURCES.md](./SOURCES.md) → [CONTRIBUTING.md](./CONTRIBUTING.md) → Issue 模板 |
 
 ## 内容
 
