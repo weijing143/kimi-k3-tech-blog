@@ -38,6 +38,7 @@
 - [《Attention Residuals 工程解析：残差连接还不够——让每层自己决定"读谁"》](./posts/attnres-engineering.md) —— 伪查询注意力 over depth、Full/Block 版内存权衡、官方伪代码逐行解读
 - [《KDA 不是"线性注意力"这么简单：从递推公式到 vLLM Prefix Cache》](./posts/kda-from-formula-to-vllm.md) —— 从 delta rule 推导到 FLA / vLLM 源码追踪
 - [《Stable LatentMoE 工程解析：Quantile Balancing、EP 通信与 896 专家路由》](./posts/latentmoe-engineering.md) —— LatentMoE 原理、QB 无辅助损失均衡、vLLM EP 后端与路由健康诊断
+- [《Kimi K3 微调实践：3T 模型的 LoRA 路线、成本账与奖励设计》](./posts/k3-finetune-practice.md) —— LoRA rank 与容量、RL 成本实测（~$65/20 步）、Countdown vs Frozen Lake 奖励设计对比
 - [《Kimi K3 License 实务：商用、微调和再分发的条款对照与部署清单》](./posts/k3-license-practice.md) —— 逐条拆解 + 场景决策矩阵 + 合规清单，纠正"K3 是 MIT"的误传
 - [《Kimi K3 自部署实验手册：从 8× H100 到 64 卡 Supernode》](./posts/k3-selfhost-runbook.md) —— 显存算术、启动命令、压测方法学与留空结果表，配套脚本见 [examples/k3_selfhost_bench/](./examples/k3_selfhost_bench/)
 
