@@ -1,5 +1,9 @@
 # Kimi K3 技术博客整理
 
+![CI](https://github.com/weijing143/kimi-k3-tech-blog/actions/workflows/test.yml/badge.svg)
+![License](https://img.shields.io/badge/License-CC%20BY--NC%204.0-8ca0ff)
+![Topics](https://img.shields.io/badge/Topics-8%20篇专题-34d399)
+
 本仓库是对 Moonshot AI（月之暗面）于 2026-07-16 发布的 **Kimi K3** 模型的技术资料整理，仅供个人学习参考。权重与技术报告已于 2026-07-27 发布（Hugging Face `moonshotai/Kimi-K3`，Kimi K3 License）。
 
 ## 阅读路径
@@ -36,6 +40,7 @@
 
 - [《Kimi K3 Agent 工程实践：完整回传 reasoning / tool history 的可靠调用框架》](./posts/k3-agent-engineering.md) —— 配套可运行代码见 [examples/k3_agent_framework/](./examples/k3_agent_framework/)
 - [《开源三巨头横评：Kimi K3 vs DeepSeek V4 Pro vs GLM-5.2》](./posts/k3-vs-v4pro-vs-glm52.md) —— 规格/基准/价格/吞吐横向对比 + 决策框架，标注"第三方评测 vs 官方自报"
+- [《Kimi K3 生态追踪：发布首周的适配进度》](./posts/k3-ecosystem-tracking.md) —— vLLM/SGLang Day-0、llama.cpp 预发布分析、GGUF 量化状态（时间快照，注意时效性）
 - [《Attention Residuals 工程解析：残差连接还不够——让每层自己决定"读谁"》](./posts/attnres-engineering.md) —— 伪查询注意力 over depth、Full/Block 版内存权衡、官方伪代码逐行解读
 - [《KDA 不是"线性注意力"这么简单：从递推公式到 vLLM Prefix Cache》](./posts/kda-from-formula-to-vllm.md) —— 从 delta rule 推导到 FLA / vLLM 源码追踪
 - [《Stable LatentMoE 工程解析：Quantile Balancing、EP 通信与 896 专家路由》](./posts/latentmoe-engineering.md) —— LatentMoE 原理、QB 无辅助损失均衡、vLLM EP 后端与路由健康诊断

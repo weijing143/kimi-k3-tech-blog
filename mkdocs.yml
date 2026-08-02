@@ -1,0 +1,67 @@
+site_name: Kimi K3 技术博客整理
+site_description: Moonshot AI Kimi K3 模型技术资料整理（个人学习参考）
+site_url: https://weijing143.github.io/kimi-k3-tech-blog/
+repo_url: https://github.com/weijing143/kimi-k3-tech-blog
+edit_uri: edit/main/
+
+theme:
+  name: material
+  language: zh
+  icon:
+    logo: material/library
+    repo: fontawesome/brands/github
+  palette:
+    - scheme: slate
+      primary: indigo
+      accent: teal
+      toggle:
+        icon: material/brightness-4
+        name: 切换到浅色
+    - scheme: default
+      primary: indigo
+      accent: teal
+      toggle:
+        icon: material/brightness-7
+        name: 切换到深色
+  features:
+    - navigation.sections
+    - navigation.top
+    - navigation.expand
+    - search.suggest
+    - search.highlight
+    - toc.follow
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+extra:
+  generator: false
+
+copyright: 整理与汇编内容 CC BY-NC 4.0 · 原始资料版权归原权利方所有
+
+nav:
+  - 首页: index.md
+  - 主文档: kimi-k3-tech-blog.md
+  - 专题文章:
+      - Agent 工程实践: posts/k3-agent-engineering.md
+      - KDA 推导: posts/kda-from-formula-to-vllm.md
+      - LatentMoE 工程: posts/latentmoe-engineering.md
+      - AttnRes 工程: posts/attnres-engineering.md
+      - 微调实践: posts/k3-finetune-practice.md
+      - License 实务: posts/k3-license-practice.md
+      - 自部署手册: posts/k3-selfhost-runbook.md
+      - 三方横评: posts/k3-vs-v4pro-vs-glm52.md
+      - 生态追踪: posts/k3-ecosystem-tracking.md
+      - 发布文案: posts/release-announcement.md
+  - 证据台账: SOURCES.md
+  - 结构化数据:
+      - 基准数据说明: data.md
