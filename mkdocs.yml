@@ -50,6 +50,7 @@ copyright: 整理与汇编内容 CC BY-NC 4.0 · 原始资料版权归原权利�
 
 nav:
   - 首页: index.md
+  - 交互式看板: k3-dashboard.html
   - 主文档: kimi-k3-tech-blog.md
   - 专题文章:
       - Agent 工程实践: posts/k3-agent-engineering.md

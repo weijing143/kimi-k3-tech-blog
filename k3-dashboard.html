@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kimi K3 · 开源前沿智能 · 技术看板</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#070b14;--card:rgba(15,23,42,.62);--line:rgba(148,163,184,.14);
+        --txt:#e2e8f0;--muted:#8fa3bd;--blue:#60a5fa;--green:#34d399;
+        --red:#f87171;--purple:#a78bfa;--amber:#fbbf24;--cyan:#22d3ee;}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:radial-gradient(1200px 600px at 20% -10%,#101b33 0%,transparent 60%),
+               linear-gradient(180deg,var(--bg),#060910);color:var(--txt);
+       font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;line-height:1.75}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 22px}
+  header{padding:64px 0 20px;text-align:center}
+  h1{font-size:clamp(30px,5.4vw,52px);font-weight:900;
+     background:linear-gradient(100deg,#f8fafc 10%,var(--blue) 45%,var(--purple) 80%);
+     -webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--muted);max-width:780px;margin:14px auto 24px}
+  .meta{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;font-size:12.5px;
+        color:var(--muted);font-family:'JetBrains Mono',monospace}
+  .meta span{border:1px solid var(--line);border-radius:8px;padding:4px 12px;background:rgba(15,23,42,.55)}
+  .meta b{color:var(--blue);font-weight:600}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;
+        padding:22px;margin:16px 0;animation:fadeUp .65s ease both}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  canvas{width:100%;display:block;border-radius:12px;background:rgba(7,11,20,.55);
+         border:1px solid var(--line)}
+  .cap{font-size:12px;color:var(--muted);margin-top:8px;text-align:center;
+       font-family:'JetBrains Mono',monospace}
+  .ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:12px 14px;margin-top:10px;
+        border:1px dashed rgba(148,163,184,.25);border-radius:12px;font-size:13px;color:var(--muted)}
+  .toggle{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+  .toggle button{background:transparent;border:none;color:var(--muted);padding:6px 16px;
+        font-size:13px;cursor:pointer}
+  .toggle button.on{background:rgba(96,165,250,.25);color:var(--txt)}
+  h2.sec{font-size:19px;font-weight:700;margin:8px 0 4px;display:flex;align-items:center;gap:8px}
+  h2.sec .tag{font-size:11px;color:var(--muted);font-weight:400;border:1px solid var(--line);
+        padding:1px 8px;border-radius:999px}
+  .grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:12px}
+  .kpi{background:rgba(7,11,20,.55);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+  .kpi .n{font-size:26px;font-weight:800;font-family:'JetBrains Mono',monospace}
+  .kpi .l{font-size:12px;color:var(--muted);margin-top:2px}
+  .kpi .s{font-size:11px;color:var(--amber);margin-top:4px}
+  .kpi .ok{color:var(--green)}
+  .kpi .bad{color:var(--red)}
+  .filterbar{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 10px}
+  .chip{border:1px solid var(--line);background:rgba(15,23,42,.5);color:var(--muted);
+        border-radius:999px;padding:5px 14px;font-size:12.5px;cursor:pointer;transition:.15s}
+  .chip:hover{color:var(--txt);border-color:var(--blue)}
+  .chip.on{background:rgba(96,165,250,.22);color:var(--txt);border-color:var(--blue)}
+  .brow{display:flex;align-items:center;gap:12px;padding:9px 6px;border-bottom:1px solid rgba(148,163,184,.08)}
+  .brow:hover{background:rgba(96,165,250,.06)}
+  .bname{flex:0 0 190px;font-size:13.5px;font-weight:500}
+  .bname small{display:block;font-size:11px;color:var(--muted);font-weight:400}
+  .bbar{flex:1;height:10px;border-radius:6px;background:rgba(148,163,184,.12);overflow:hidden}
+  .bfill{height:100%;border-radius:6px;transition:width .5s ease}
+  .bval{flex:0 0 64px;text-align:right;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--txt)}
+  .bst{flex:0 0 118px;text-align:right;font-size:11.5px}
+  .badge{display:inline-block;border-radius:999px;padding:2px 10px;font-size:11px;white-space:nowrap}
+  .badge.rep{background:rgba(52,211,153,.15);color:var(--green);border:1px solid rgba(52,211,153,.35)}
+  .badge.diff{background:rgba(251,191,36,.13);color:var(--amber);border:1px solid rgba(251,191,36,.3)}
+  .badge.none{background:rgba(148,163,184,.1);color:var(--muted);border:1px solid var(--line)}
+  .counts{display:flex;gap:16px;font-size:12.5px;color:var(--muted);margin:6px 0 0}
+  .counts b{font-family:'JetBrains Mono',monospace}
+  .articles{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-top:14px}
+  .alink{display:block;background:rgba(7,11,20,.55);border:1px solid var(--line);border-radius:14px;
+         padding:14px 16px;text-decoration:none;color:var(--txt);transition:.15s}
+  .alink:hover{border-color:var(--blue);transform:translateY(-2px)}
+  .alink .t{font-size:14.5px;font-weight:600}
+  .alink .d{font-size:12px;color:var(--muted);margin-top:4px}
+  .alink .arw{color:var(--blue);float:right;font-size:16px}
+  .foot{text-align:center;color:var(--muted);font-size:12px;padding:30px 0 44px}
+  .foot a{color:var(--blue);text-decoration:none}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;font-size:12px;color:var(--muted);margin-top:10px}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+  .note{font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.6}
+</style>
+</head>
+<body>
+<header class="wrap">
+  <h1>Kimi K3 · 开源前沿智能</h1>
+  <p class="sub">Moonshot AI 首个开源 3T 级模型 —— 2.8T 总参数 / 104B 激活，KDA 线性注意力 + AttnRes 深度残差 + Stable LatentMoE，原生视觉与 1M 上下文。本页为技术资料整理的可视化看板，数据逐项可溯源至<a href="SOURCES.md" style="color:var(--blue)">证据台账</a>。</p>
+  <div class="meta">
+    <span>⚙️ <b>2.8T</b> 总参数</span>
+    <span>🔥 <b>104B</b> 激活 / token</span>
+    <span>🧠 <b>93</b> 层 · 69 KDA + 24 Gated MLA</span>
+    <span>📦 <b>896</b> 专家 · 16 激活 · 2 共享</span>
+    <span>📏 上下文 <b>1,048,576</b></span>
+    <span>🎨 原生视觉 MoonViT-V2</span>
+    <span>📄 License: Kimi K3 License</span>
+  </div>
+</header>
+
+<section class="wrap">
+  <div class="card">
+    <h2 class="sec">🧬 架构总览 <span class="tag">官方模型卡 · A 级</span></h2>
+    <canvas id="c-arch" style="height:400px"></canvas>
+    <div class="ctrl">
+      <span>查看模式</span>
+      <div class="toggle" id="archToggle">
+        <button data-mode="layers" class="on">层组成</button>
+        <button data-mode="flow">信息流</button>
+      </div>
+      <span style="flex:1"></span>
+      <span id="archInfo" style="font-family:'JetBrains Mono',monospace;font-size:12px"></span>
+    </div>
+    <div class="legend">
+      <span><i style="background:#60a5fa"></i>KDA 线性注意力 ×69</span>
+      <span><i style="background:#a78bfa"></i>Gated MLA ×24</span>
+      <span><i style="background:#34d399"></i>Dense 输出层 ×1</span>
+      <span><i style="background:#fbbf24"></i>AttnRes 深度残差</span>
+    </div>
+    <div class="cap">图 1 · Kimi K3 混合注意力层组成（93 层）与信息流示意</div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="card">
+    <h2 class="sec">📊 31 项官方基准 <span class="tag">B 级 · 官方自报</span></h2>
+    <div class="filterbar" id="catBar">
+      <button class="chip on" data-cat="all">全部</button>
+      <button class="chip" data-cat="coding">Coding 8</button>
+      <button class="chip" data-cat="info-gathering">信息检索 2</button>
+      <button class="chip" data-cat="tool-use">工具调用 3</button>
+      <button class="chip" data-cat="productivity">生产力 5</button>
+      <button class="chip" data-cat="agent">Agent 2</button>
+      <button class="chip" data-cat="reasoning">推理 3</button>
+      <button class="chip" data-cat="multimodal">多模态 8</button>
+    </div>
+    <div class="filterbar" id="stBar">
+      <button class="chip on" data-st="all">全部状态</button>
+      <button class="chip" data-st="rep">🟢 复现（官方×第三方一致）</button>
+      <button class="chip" data-st="diff">🟡 第三方有实测·有差异</button>
+      <button class="chip" data-st="none">⚪ 无独立实测</button>
+    </div>
+    <div class="counts" id="counts"></div>
+    <div id="benchList"></div>
+    <div class="note">注：评分单位默认百分比；Elo 用于 GDPval-AA v2 / AA-Briefcase；DeepSearchQA 为 F1。"复现"= 独立第三方实测与官方一致（AA / Vals AI 等）；"有差异"= 第三方有独立实测但 harness / 口径不同（如 Terminal-Bench 官方 88.3 vs AA 85%）；"无独立实测"= 仅官方自报，多为 Moonshot 独占基准。详见 <a href="SOURCES.md" style="color:var(--blue)">SOURCES.md §2</a>。</div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="card">
+    <h2 class="sec">📈 核心数字 <span class="tag">2026-08-03 核验</span></h2>
+    <div class="grid4" id="kpiGrid"></div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="card">
+    <h2 class="sec">📚 专题文章 <span class="tag">10 篇</span></h2>
+    <div class="articles" id="artGrid"></div>
+  </div>
+</section>
+
+<footer class="wrap foot">
+  整理与汇编内容 CC BY-NC 4.0 · 原始资料版权归原权利方所有<br>
+  证据台账 <a href="SOURCES.md">SOURCES.md</a> · 核验清单 <a href="VERIFICATION.md">VERIFICATION.md</a> · 数据 <a href="data/benchmarks.json">benchmarks.json</a>
+</footer>
+
+<script defer>
+/* ================= 数据（内嵌自 data/benchmarks.json + SOURCES.md 台账） ================= */
+const BENCH = [
+ {name:"FrontierSWE",cat:"coding",score:81.2,unit:"%",harness:"Kimi Code",st:"none",note:"Moonshot 独占基准，无公开第三方独立实测"},
+ {name:"Program Bench",cat:"coding",score:77.8,unit:"%",harness:"Kimi Code",st:"none",note:"llm-stats 标注 self-reported，仅转录官方"},
+ {name:"Terminal-Bench 2.1",cat:"coding",score:88.3,unit:"%",harness:"Kimi Code",st:"diff",note:"AA 独立实测 85%（harness 不同，差 3.3pt）"},
+ {name:"Kimi Code Bench 2.0",cat:"coding",score:72.9,unit:"%",harness:"Kimi Code",st:"none",note:"Moonshot 独占；Claude Code harness 下 73.7"},
+ {name:"DeepSWE",cat:"coding",score:67.5,unit:"%",harness:"Kimi Code",st:"diff",note:"AA Coding Agent Index 实测 64%（harness 不同）"},
+ {name:"MLS Bench Lite",cat:"coding",score:48.3,unit:"%",harness:"—",st:"none",note:"无公开第三方独立实测"},
+ {name:"SWE Marathon",cat:"coding",score:42.0,unit:"%",harness:"Claude Code",st:"none",note:"长时程基准，无第三方独立实测"},
+ {name:"PostTrain Bench",cat:"coding",score:36.6,unit:"%",harness:"H20 运行",st:"none",note:"3 次平均 max reasoning，无第三方复跑"},
+ {name:"BrowseComp",cat:"info-gathering",score:91.2,unit:"%",harness:"300K 压缩",st:"none",note:"BenchLM 收录值系转录官方，非独立实测"},
+ {name:"DeepSearchQA",cat:"info-gathering",score:95.0,unit:"F1",harness:"—",st:"none",note:"无公开第三方独立实测"},
+ {name:"MCP Atlas",cat:"tool-use",score:84.2,unit:"%",harness:"500 任务子集",st:"none",note:"Gemini 3.1 Pro 裁判；无第三方独立实测"},
+ {name:"Toolathlon",cat:"tool-use",score:76.5,unit:"%",harness:"—",st:"diff",note:"早期第三方值 73.2（官方表注记吻合）"},
+ {name:"AutomationBench",cat:"tool-use",score:30.8,unit:"%",harness:"600 任务子集",st:"diff",note:"AA 版 53% 口径不同，不可直接比"},
+ {name:"GDPval-AA v2",cat:"productivity",score:1686,unit:"Elo",harness:"—",st:"rep",note:"AA 实测 Elo 1,686 一致（同源转录核对）"},
+ {name:"AA-Briefcase",cat:"productivity",score:1548,unit:"Elo",harness:"—",st:"rep",note:"AA 实测 Elo 1,548 一致（同源转录核对）"},
+ {name:"DECK-Bench",cat:"productivity",score:73.5,unit:"%",harness:"—",st:"none",note:"来源待确认（疑第三方聚合，官方表未收录）"},
+ {name:"OfficeQA Pro",cat:"productivity",score:63.3,unit:"%",harness:"PDF 转图",st:"none",note:"无公开第三方独立实测"},
+ {name:"SpreadsheetBench 2",cat:"productivity",score:34.8,unit:"%",harness:"—",st:"none",note:"无公开第三方独立实测"},
+ {name:"Job Bench",cat:"agent",score:54.3,unit:"%",harness:"—",st:"diff",note:"早期第三方值 52.9（官方表注记吻合）"},
+ {name:"APEX-Agents",cat:"agent",score:41.0,unit:"%",harness:"—",st:"rep",note:"AA 实测 41% 一致（同源可能已注明）"},
+ {name:"GPQA-Diamond",cat:"reasoning",score:93.5,unit:"%",harness:"—",st:"rep",note:"AA 实测 93.5% / 94% 一致"},
+ {name:"HLE-Full (无工具)",cat:"reasoning",score:43.5,unit:"%",harness:"—",st:"rep",note:"AA 实测 43.5% 一致"},
+ {name:"HLE-Full (带工具)",cat:"reasoning",score:56.0,unit:"%",harness:"—",st:"rep",note:"AA 实测 56.0% 一致"},
+ {name:"MathVision",cat:"multimodal",score:94.3,unit:"%",harness:"—",st:"none",note:"工具/Python 下 97.8；无第三方独立实测"},
+ {name:"CharXiv RQ",cat:"multimodal",score:84.8,unit:"%",harness:"—",st:"none",note:"工具/Python 下 91.3；无第三方独立实测"},
+ {name:"MMMU-Pro",cat:"multimodal",score:81.6,unit:"%",harness:"图片前置",st:"diff",note:"AA 独立协议实测 84.7%（差 3.1pt）"},
+ {name:"OmniDocBench",cat:"multimodal",score:91.1,unit:"%",harness:"—",st:"none",note:"无公开第三方独立实测"},
+ {name:"BabyVision",cat:"multimodal",score:null,unit:"%",harness:"工具/Python",st:"none",note:"官方仅公布带工具 85.7，无独立实测"},
+ {name:"PerceptionBench",cat:"multimodal",score:58.5,unit:"%",harness:"内部基准",st:"none",note:"Moonshot 内部原子视觉感知基准"},
+ {name:"WorldVQA",cat:"multimodal",score:51.0,unit:"%",harness:"—",st:"none",note:"无公开第三方独立实测"},
+ {name:"ZeroBench Main",cat:"multimodal",score:23.0,unit:"%",harness:"5 次 pass@5",st:"none",note:"工具/Python 下 41.0；无第三方独立实测"}
+];
+const CATS={coding:"Coding",info:"信息检索",tool:"工具调用",prod:"生产力",agent:"Agent",reason:"推理",multi:"多模态"};
+const KPI=[
+ {n:"$0.30 / $3.00 / $15.00",l:"国际 API 定价（缓存命中/输入/输出 · 每 MTok）",s:"≥9 家平台同价售卖 · 复现",c:"ok"},
+ {n:"¥2 / ¥20 / ¥100",l:"中国区 API 定价（每 MTok）",s:"官方中文页 + 第三方确认 · 复现",c:"ok"},
+ {n:"1,048,576",l:"上下文窗口 tokens",s:"官方 + lorphic/Context Studios 确认 · 复现",c:"ok"},
+ {n:"MXFP4 / MXFP8",l:"量化（QAT：权重 4bit / 激活 8bit）",s:"vLLM Day-0 + 多方确认 · 复现",c:"ok"},
+ {n:"6.3× / 2.5×",l:"KDA 解码提速 / 扩展效率（vs K2）",s:"官方自报，第三方仅转述 · 未复现",c:"bad"},
+ {n:">90%",l:"编程负载缓存命中率（Mooncake）",s:"官方数字，第三方转述 · 未复现",c:"bad"},
+ {n:"$20M / 1 亿 MAU",l:"License 商业门槛（MaaS 收入 / 署名触发）",s:"五家独立解读逐条一致 · 复现",c:"ok"},
+ {n:"57 / 74.70% / 79.2",l:"AA 智能指数 / Vals Index / LiveBench",s:"第三方独立实测（官方表未收录）",c:"ok"}
+];
+const ARTS=[
+ {t:"Agent 工程实践",d:"K3 在 agent 工作流中的工程落地：回传、重试、成本",u:"posts/k3-agent-engineering.md"},
+ {t:"KDA 推导：从公式到 vLLM",d:"Kimi Delta Attention 递推公式与引擎实现追踪",u:"posts/kda-from-formula-to-vllm.md"},
+ {t:"LatentMoE 工程",d:"896 专家量化均衡路由、带宽与通信收益",u:"posts/latentmoe-engineering.md"},
+ {t:"AttnRes 工程",d:"Attention Residuals 深度残差机制深入",u:"posts/attnres-engineering.md"},
+ {t:"微调实践",d:"LoRA 路线、成本台账与奖励设计",u:"posts/k3-finetune-practice.md"},
+ {t:"License 实务",d:"Kimi K3 License 五条条款逐条解读与合规要点",u:"posts/k3-license-practice.md"},
+ {t:"自部署手册",d:"vLLM/SGLang 自部署实验手册与外部实测索引",u:"posts/k3-selfhost-runbook.md"},
+ {t:"三方横评",d:"K3 vs DeepSeek V4 Pro vs GLM-5.2 开放权重对比",u:"posts/k3-vs-v4pro-vs-glm52.md"},
+ {t:"生态追踪",d:"推理引擎、API 平台与生态动态跟踪",u:"posts/k3-ecosystem-tracking.md"},
+ {t:"发布文案",d:"官方发布口径整理与数据来源说明",u:"posts/release-announcement.md"}
+];
+const BASE="https://weijing143.github.io/kimi-k3-tech-blog/";
+
+/* ================= 工具函数 ================= */
+function fit(c){const dpr=window.devicePixelRatio||1;const r=c.getBoundingClientRect();
+  c.width=Math.max(1,Math.round(r.width*dpr));c.height=Math.max(1,Math.round(r.height*dpr));
+  const ctx=c.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);return {ctx,w:r.width,h:r.height};}
+function label(ctx,t,x,y,color,align='left',size=12,weight='normal'){
+  ctx.font=`${weight} ${size}px 'Noto Sans SC','Segoe UI',sans-serif`;
+  ctx.fillStyle=color;ctx.textAlign=align;ctx.textBaseline='middle';ctx.fillText(t,x,y);}
+function rrect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+const C={blue:'#60a5fa',purple:'#a78bfa',green:'#34d399',amber:'#fbbf24',muted:'#8fa3bd',txt:'#e2e8f0',red:'#f87171',cyan:'#22d3ee'};
+
+/* ================= 架构图 ================= */
+function drawArch(){
+  const c=document.getElementById('c-arch');const {ctx,w,h}=fit(c);ctx.clearRect(0,0,w,h);
+  const mode=document.querySelector('#archToggle button.on').dataset.mode;
+  const info=document.getElementById('archInfo');
+  if(mode==='layers'){
+    info.textContent='93 层 = 69 KDA + 24 Gated MLA + 1 Dense';
+    const x0=40,x1=w-40,yTop=70,yBottom=h-70,barH=150;
+    const segs=[{n:69,c:C.blue,l:'KDA'},{n:24,c:C.purple,l:'Gated MLA'},{n:1,c:C.green,l:'Dense'}];
+    let cur=x0;
+    ctx.textAlign='center';
+    for(const s of segs){
+      const sw=(x1-x0)*s.n/93;
+      ctx.fillStyle=s.c;ctx.globalAlpha=0.85;rrect(ctx,cur,yTop,sw,barH,6);ctx.fill();ctx.globalAlpha=1;
+      ctx.fillStyle=C.muted;ctx.font="500 13px 'Noto Sans SC',sans-serif";
+      ctx.fillText(s.l,cur+sw/2,yTop-14);
+      ctx.fillStyle=C.txt;ctx.font="600 20px 'JetBrains Mono',monospace";
+      ctx.fillText(s.n+'',cur+sw/2,yTop+barH+24);
+      cur+=sw;
+    }
+    /* 下缘信息流箭头 */
+    ctx.strokeStyle=C.amber;ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(x0,yBottom);ctx.lineTo(x1,yBottom);ctx.stroke();
+    for(let i=0;i<6;i++){const ax=x0+(x1-x0)*(i+0.5)/6;arrow(ctx,ax,yBottom,ax,yBottom-14,C.amber);}
+    label(ctx,'AttnRes：每个子层用学习伪查询对前序层块残差做深度加权',w/2,h-18,C.amber,'center',12);
+  }else{
+    info.textContent='KDA 固定大小循环状态 vs MLA 完整 KV 缓存';
+    /* 左侧：KDA 循环状态 */
+    const bx0=60,bx1=w/2-30,by0=90,by1=h-100;
+    ctx.fillStyle='rgba(96,165,250,.10)';rrect(ctx,bx0,by0,bx1-bx0,by1-by0,12);ctx.fill();
+    ctx.strokeStyle=C.blue;ctx.lineWidth=1.4;rrect(ctx,bx0,by0,bx1-bx0,by1-by0,12);ctx.stroke();
+    label(ctx,'KDA 层 · 固定大小循环状态',(bx0+bx1)/2,by0-18,C.blue,'center',14,'bold');
+    ctx.strokeStyle=C.blue;ctx.lineWidth=2;
+    const cy=(by0+by1)/2;
+    ctx.beginPath();ctx.moveTo(bx0+40,cy);ctx.lineTo(bx1-40,cy);ctx.stroke();
+    for(let i=0;i<4;i++){const ax=bx0+50+(bx1-bx0-90)*i/3;ctx.beginPath();ctx.arc(ax,cy,7,0,Math.PI*2);ctx.fillStyle=C.blue;ctx.fill();}
+    arrow(ctx,bx1-44,cy,bx1-20,cy,C.blue);
+    label(ctx,'循环状态（不随序列增长）',(bx0+bx1)/2,cy+34,C.muted,'center',12);
+    /* 右侧：Gated MLA 完整 KV */
+    const rx0=w/2+30,rx1=w-60;
+    ctx.fillStyle='rgba(167,139,250,.10)';rrect(ctx,rx0,by0,rx1-rx0,by1-by0,12);ctx.fill();
+    ctx.strokeStyle=C.purple;ctx.lineWidth=1.4;rrect(ctx,rx0,by0,rx1-rx0,by1-by0,12);ctx.stroke();
+    label(ctx,'Gated MLA · 完整 KV 缓存',(rx0+rx1)/2,by0-18,C.purple,'center',14,'bold');
+    for(let row=0;row<5;row++){
+      for(let col=0;col<8;col++){
+        const kx=rx0+22+col*((rx1-rx0-44)/7),ky=by0+24+row*((by1-by0-50)/4);
+        ctx.fillStyle=C.purple;ctx.globalAlpha=0.8;
+        rrect(ctx,kx,ky,(rx1-rx0-44)/7-6,(by1-by0-50)/4-6,4);ctx.fill();ctx.globalAlpha=1;
+      }
+    }
+    label(ctx,'KV 随序列长度线性增长（1M 上下文关键瓶颈）',(rx0+rx1)/2,by1+24,C.muted,'center',12);
+    /* 中间连接 */
+    ctx.setLineDash([6,5]);ctx.strokeStyle=C.amber;ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(bx1+6,(by0+by1)/2);ctx.lineTo(rx0-6,(by0+by1)/2);ctx.stroke();
+    ctx.setLineDash([]);
+    label(ctx,'69 层 KDA 为主 + 24 层 MLA 精确回溯',(bx1+rx0)/2,(by0+by1)/2-18,C.amber,'center',12,'bold');
+  }
+}
+function arrow(ctx,x1,y1,x2,y2,color,size=7){
+  const a=Math.atan2(y2-y1,x2-x1);
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-size*Math.cos(a-0.45),y2-size*Math.sin(a-0.45));
+  ctx.lineTo(x2-size*Math.cos(a+0.45),y2-size*Math.sin(a+0.45));
+  ctx.closePath();ctx.fill();
+}
+
+/* ================= 基准看板（DOM 渲染） ================= */
+let curCat='all',curSt='all';
+function colorOf(cat){
+  return {coding:C.blue,'info-gathering':C.cyan,'tool-use':C.purple,productivity:C.amber,agent:C.green,reasoning:C.red,multimodal:'#f472b6'}[cat]||C.muted;
+}
+function badgeHTML(st){
+  if(st==='rep')return '<span class="badge rep">🟢 复现</span>';
+  if(st==='diff')return '<span class="badge diff">🟡 有差异</span>';
+  return '<span class="badge none">⚪ 无独立实测</span>';
+}
+function renderBench(){
+  const list=document.getElementById('benchList');
+  const items=BENCH.filter(b=>(curCat==='all'||b.cat===curCat)&&(curSt==='all'||b.st===curSt));
+  const max=Math.max(...items.map(b=>b.score||0));
+  list.innerHTML=items.map(b=>{
+    const pct=b.score==null?0:Math.round(b.score/max*100);
+    const col=colorOf(b.cat);
+    return `<div class="brow">
+      <div class="bname">${b.name}<small>${b.harness}</small></div>
+      <div class="bbar"><div class="bfill" style="width:${pct}%;background:linear-gradient(90deg,${col},${col}cc)"></div></div>
+      <div class="bval">${b.score==null?'—':b.score+(b.unit||'')}</div>
+      <div class="bst">${badgeHTML(b.st)}</div>
+    </div>`;
+  }).join('');
+  const rep=BENCH.filter(b=>b.st==='rep').length;
+  const diff=BENCH.filter(b=>b.st==='diff').length;
+  const none=BENCH.filter(b=>b.st==='none').length;
+  document.getElementById('counts').innerHTML=
+    `<span>显示 <b>${items.length}</b> / 31 项</span><span>🟢 复现 <b>${rep}</b></span><span>🟡 有差异 <b>${diff}</b></span><span>⚪ 无独立实测 <b>${none}</b></span>`;
+}
+
+/* ================= KPI / 文章 ================= */
+function renderKPI(){
+  document.getElementById('kpiGrid').innerHTML=KPI.map(k=>
+    `<div class="kpi"><div class="n">${k.n}</div><div class="l">${k.l}</div><div class="s ${k.c}">${k.s}</div></div>`).join('');
+}
+function renderArts(){
+  document.getElementById('artGrid').innerHTML=ARTS.map(a=>
+    `<a class="alink" href="${BASE}${a.u}"><span class="arw">→</span><div class="t">${a.t}</div><div class="d">${a.d}</div></a>`).join('');
+}
+
+/* ================= 交互绑定 ================= */
+document.querySelector('#archToggle').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  document.querySelectorAll('#archToggle button').forEach(x=>x.classList.toggle('on',x===b));
+  drawArch();
+});
+document.querySelector('#catBar').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  document.querySelectorAll('#catBar .chip').forEach(x=>x.classList.toggle('on',x===b));
+  curCat=b.dataset.cat;renderBench();
+});
+document.querySelector('#stBar').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  document.querySelectorAll('#stBar .chip').forEach(x=>x.classList.toggle('on',x===b));
+  curSt=b.dataset.st;renderBench();
+});
+window.addEventListener('resize',drawArch);
+
+/* ================= 初始化 ================= */
+document.addEventListener('DOMContentLoaded',()=>{
+  drawArch();renderBench();renderKPI();renderArts();
+});
+</script>
+</body>
+</html>
