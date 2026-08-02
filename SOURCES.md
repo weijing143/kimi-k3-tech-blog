@@ -1,7 +1,7 @@
 # SOURCES.md · 证据台账
 
 > 本表登记仓库中**关键数据的来源、核对日期与证据等级**，用于：（1）让读者能区分"官方一手 / 官方自报 / 第三方转述 / 推测 / 实测"；（2）官方模型卡、价格、推理框架更新后做增量维护。
-> 最近全量核对日期：**2026-07-28**。
+> 最近全量核对日期：**2026-08-03**（含官方 × 第三方实测比对）。
 >
 > **证据等级定义**：
 > - **A · 官方一手**：直接取自 Moonshot 官方模型卡 / 博客 / 文档 / LICENSE 原文；
@@ -13,6 +13,7 @@
 > **复现状态定义**（与证据等级分开记录）：
 > - **未复现**：仅核对来源或转录数据，未按原方法重新执行；
 > - **外部实测**：第三方在真实环境中测得，环境与原始证据可追溯，但本项目未复跑；
+> - **复现（官方 × 第三方比对）**：官方自报数据与至少一个**独立第三方实测**（Artificial Analysis / Vals AI / LiveBench / Arena 等）在可比口径下比对一致 → 标记复现。两独立来源相互印证，但**非本项目实跑**；
 > - **本项目复现**：本项目按公开方法执行，并保留环境、脚本与原始输出；
 > - **交叉复现**：本项目与至少一个独立外部来源在可比条件下得到一致结论。
 >
@@ -45,6 +46,38 @@
 | 其中十余项（SWE Marathon、Terminal-Bench、KCB 2.0、BrowseComp、GDPval、MMMU-Pro、ZeroBench 等） | 已逐项与官方表比对 | 2026-07-28 | B | 未复现（仅核对） |
 | 其余收录项 | 转录自同一张官方表，**未逐项比对**（同源转录，风险低） | 2026-07-28 | B | 未复现 |
 | 他模型对照分数 | 官方表脚注注明各自 harness 与来源（Artificial Analysis / Vals AI / 官方榜单，截至 2026-07-23） | 2026-07-28 | B/C | 未复现 |
+
+### 2.1 官方 × 第三方独立实测比对（2026-08-03 采集）
+
+> 第三方来源均为独立机构自行跑分（Artificial Analysis 自建 harness 实测；LiveBench / Vals AI / Arena 各自独立榜单）。**复现状态 = 复现（官方 × 第三方比对）表示两独立来源数值一致，非本项目实跑。**
+
+| 基准 | 官方值 | 第三方实测值 | 第三方来源 | 比对结论 | 复现状态 |
+| --- | --- | --- | --- | --- | --- |
+| GPQA-Diamond | 93.5 | 93.5%（graysoft 转 AA 模型页）/ 94%（AA 快照） | [AA 模型页](https://artificialanalysis.ai/models/kimi-k3) · [emergent.sh](https://emergent.sh/learn/kimi-k3-benchmark)（2026-07-23 快照） | 一致（±0.5 内） | **复现** |
+| HLE-Full（无工具） | 43.5 | 43.5% | AA 快照（emergent.sh，2026-07-23） | 一致 | **复现** |
+| HLE-Full（带工具） | 56.0 | 56.0% | AA 快照（emergent.sh，2026-07-23） | 一致 | **复现** |
+| APEX-Agents | 41.0 | 41%（APEX-Agents-AA） | AA（emergent.sh 转述） | 一致（注意：APEX-Agents-AA 即 AA 实现，可能与官方表同源） | **复现**（同源可能已注明） |
+| GDPval-AA v2 | 1686 Elo | Elo 1,686 | AA 快照（emergent.sh，2026-07-23） | 一致（基准本身即 AA 评测，官方表收录 AA 数据，属转录核对） | **复现**（同源转录核对） |
+| AA-Briefcase | 1548 Elo | Elo 1,548 | AA 快照（emergent.sh，2026-07-23） | 一致（基准本身即 AA 评测） | **复现**（同源转录核对） |
+| Terminal-Bench 2.1 | 88.3（Kimi Code） | 85% | [AA Terminal-Bench v2.1 页](https://artificialanalysis.ai/evaluations/terminalbench-v2-1) | **有差异**（AA 独立 harness vs 官方 Kimi Code，差 3.3pt） | 外部实测存在，**不标复现** |
+| DeepSWE | 67.5（Kimi Code） | 64% | AA Coding Agent Index（AA LinkedIn 公布） | **有差异**（harness 不同） | 外部实测存在，**不标复现** |
+| AutomationBench | 30.8（600-task subset） | 53%（AutomationBench-AA） | AA（emergent.sh 转述） | **口径不同**（AA 版 vs 官方子集版，不可直接比） | 不可比，**不标复现** |
+
+### 2.2 第三方独立实测（官方表未收录，2026-08-03 采集）
+
+| 指标 | K3 值 | 来源 | 等级 | 复现状态 |
+| --- | --- | --- | --- | --- |
+| AA Intelligence Index v4.1 | 57（排名 #3/#4，开放权重第一） | [AA 模型页](https://artificialanalysis.ai/models/kimi-k3) | C（第三方独立评测） | 外部实测 |
+| Vals AI Index | 74.70%（#2/#3） | [vals.ai/benchmarks](https://www.vals.ai/benchmarks)（2026-07-23 更新） | C | 外部实测 |
+| LiveBench（综合分） | 79.2（8 个子项 62.2–90.7） | [livebench.ai](https://livebench.ai/) | C | 外部实测 |
+| LMArena Frontend Code Arena | Elo 1679（#1，超 Fable 5） | Arena 官方公告（2026-07-16） | A（榜单官方公告） | 外部实测 |
+| AA Coding Agent Index | 57（#5，开放权重第一） | AA 官方公布 | C | 外部实测 |
+| SciCode | 58.7% | AA 快照（emergent.sh，2026-07-23） | C | 外部实测 |
+| τ³-Banking | 33% | AA 快照（emergent.sh，2026-07-23） | C | 外部实测 |
+| AA-LCR（长上下文） | 74.7% | AA 快照（emergent.sh，2026-07-23） | C | 外部实测 |
+| AA-Omniscience（准确率 / 非幻觉率） | 46% / 49% | AA 快照（emergent.sh，2026-07-23） | C | 外部实测 |
+| Harvey LAB-AA | 95%（#1） | AA（emergent.sh 转述） | C | 外部实测 |
+| AutomationBench-AA | 53%（#1） | AA（emergent.sh 转述） | C | 外部实测 |
 
 ## 3. License（License 篇）
 
@@ -94,7 +127,9 @@
 2. "2.5× 扩展效率"—— 官方自报，无第三方复现；"25% 训练效率"—— 2026-08-02 核验：官方各源均未公布该百分比，出处未确认，已从各篇撤回；
 3. QB 精确公式（更新频率、分位数估计方式）—— 待核对技术报告原文；
 4. 第三方（如 GPT 评审）全文逐句校对 —— 未做；
-5. 代码对真实 K3 API / 自部署 vLLM/SGLang 的端到端验证 —— 未做，需 API 额度与硬件。
+5. 代码对真实 K3 API / 自部署 vLLM/SGLang 的端到端验证 —— 未做，需 API 额度与硬件；
+6. 官方 31 项中仅 6 项获得第三方独立实测比对（§2.1）；其余 25 项（FrontierSWE、Program Bench、KCB 2.0、BrowseComp、SWE Marathon、MMMU-Pro、ZeroBench 等）暂无公开第三方独立实测，仍为 B 级官方自报未复现；
+7. Terminal-Bench 2.1 / DeepSWE 官方值与 AA 独立 harness 存在差异（3.3pt / 3.5pt）—— 差异源于 harness 而非模型能力，属口径差异，持续关注。
 
 ## 维护说明
 

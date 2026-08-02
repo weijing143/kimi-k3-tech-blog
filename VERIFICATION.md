@@ -94,6 +94,24 @@ curl -s -A "Mozilla/5.0" "https://arxiv.org/abs/2603.15031" | grep -oE "<title>[
 | 20 | KDA 篇 6.3× TPOT（1.84 vs 11.48ms @1M）与 3:1 混合比 | Kimi Linear 官方仓库 | 一致（48B 验证模型口径已标注） | A |
 | 21 | §7.2 AA 单任务成本 $0.94 / token 效率 +21% | Artificial Analysis（第三方） | 保留 C 级标注 | C |
 
+### 2026-08-03 · 第三轮：官方 × 第三方独立实测比对
+
+> 目的：按新复现口径（官方自报数据与独立第三方实测一致 → 标记"复现"），用 Artificial Analysis / Vals AI / LiveBench / Arena 的独立跑分比对官方 31 项基准。
+
+| # | 基准 | 官方值 | 第三方实测 | 来源 | 结论 | 复现状态 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 22 | GPQA-Diamond | 93.5 | 93.5% / 94% | AA 模型页（graysoft 转述）/ AA 快照 | 一致（±0.5 内） | **复现**（官方×第三方） |
+| 23 | HLE-Full（无工具） | 43.5 | 43.5% | AA 快照（emergent.sh，2026-07-23） | 一致 | **复现**（官方×第三方） |
+| 24 | HLE-Full（带工具） | 56.0 | 56.0% | AA 快照（emergent.sh，2026-07-23） | 一致 | **复现**（官方×第三方） |
+| 25 | APEX-Agents | 41.0 | 41%（APEX-Agents-AA） | AA（emergent.sh 转述） | 一致，但 AA 实现可能与官方同源 | **复现**（同源可能已注明） |
+| 26 | GDPval-AA v2 | 1686 Elo | Elo 1,686 | AA 快照（emergent.sh，2026-07-23） | 一致（官方表收录即 AA 数据，属转录核对） | **复现**（同源转录核对） |
+| 27 | AA-Briefcase | 1548 Elo | Elo 1,548 | AA 快照（emergent.sh，2026-07-23） | 一致（基准本身即 AA 评测） | **复现**（同源转录核对） |
+| 28 | Terminal-Bench 2.1 | 88.3（Kimi Code） | 85% | AA Terminal-Bench v2.1 页 | 有差异（harness 不同，3.3pt） | 外部实测存在，不标复现 |
+| 29 | DeepSWE | 67.5（Kimi Code） | 64% | AA Coding Agent Index | 有差异（harness 不同，3.5pt） | 外部实测存在，不标复现 |
+| 30 | AutomationBench | 30.8（600-task subset） | 53%（AutomationBench-AA） | AA | 口径不同（AA 版 vs 官方子集版） | 不可比，不标复现 |
+
+**新增第三方独立实测登记（官方表未收录）**：AA Intelligence Index 57、AA Coding Agent Index 57、Vals AI Index 74.70%、LiveBench 综合 79.2、LMArena Frontend Code Arena Elo 1679、SciCode 58.7%、τ³-Banking 33%、AA-LCR 74.7%、AA-Omniscience 46%/49%、Harvey LAB-AA 95%、AutomationBench-AA 53% —— 全部 C 级（第三方独立评测），已写入台账 §2.2。
+
 ## 5. 维护规则
 
 - 核验记录**只追加不删除**（保留历史，便于追溯口径变化）；
