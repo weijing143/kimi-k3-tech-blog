@@ -25,7 +25,7 @@
     {"name": "AutomationBench", "category": "tool-use", "score": 30.8, "unit": null, "harness": null, "compare": {"Fable 5": 29.1, "GPT 5.6 Sol": 29.7}, "note": "600-task public subset; K3 ranks #1 under this protocol"},
     {"name": "GDPval-AA v2", "category": "productivity", "score": 1686, "unit": "Elo", "harness": null, "compare": {"Fable 5": 1747, "GPT 5.6 Sol": 1736, "Opus 4.8": 1593, "GPT 5.5": 1491, "GLM-5.2": 1510}, "note": "official full-table data (earlier third-party entry 1668)"},
     {"name": "AA-Briefcase", "category": "productivity", "score": 1548, "unit": "Elo", "harness": null, "compare": {"Fable 5": 1583}, "note": "+732 vs K2.6"},
-    {"name": "DECK-Bench", "category": "productivity", "score": 73.5, "unit": null, "harness": null, "compare": {}, "note": ""},
+    {"name": "DECK-Bench", "category": "productivity", "score": 73.5, "unit": null, "harness": null, "compare": {}, "note": "source unconfirmed: NOT in official model card full table (likely third-party aggregate); verified 2026-08-02"},
     {"name": "OfficeQA Pro", "category": "productivity", "score": 63.3, "unit": null, "harness": null, "compare": {}, "note": "PDF corpus provided as images only"},
     {"name": "SpreadsheetBench 2", "category": "productivity", "score": 34.8, "unit": null, "harness": null, "compare": {}, "note": ""},
     {"name": "Job Bench", "category": "agent", "score": 54.3, "unit": null, "harness": null, "compare": {"Fable 5": 57.4}, "note": "official full-table data (earlier third-party entry 52.9)"},

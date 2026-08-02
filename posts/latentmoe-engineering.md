@@ -1,7 +1,7 @@
 # Stable LatentMoE 工程解析：Quantile Balancing、EP 通信与 896 专家路由
 
 > 写作日期：2026-07-28｜姊妹篇：[《KDA 不是"线性注意力"这么简单》](./kda-from-formula-to-vllm.md)
-> **口径声明**：本文的架构数字（896/16/2、3584、3072 等）以 [Hugging Face 官方模型卡](https://huggingface.co/moonshotai/Kimi-K3) 为准（抓取于 2026-07-28）；Quantile Balancing、SiTU-GLU、EP 训练等机制描述综合自官方技术报告（经 AlphaXiv 报告摘要转述）与 [vLLM 官方 Day-0 支持博客](https://vllm.ai/blog/2026-07-27-k3)（2026-07-27）。**"2.5× 扩展效率提升""25% 训练效率提升"均为官方自报口径**，未见独立复现。
+> **口径声明**：本文的架构数字（896/16/2、3584、3072 等）以 [Hugging Face 官方模型卡](https://huggingface.co/moonshotai/Kimi-K3) 为准（抓取于 2026-07-28）；Quantile Balancing、SiTU-GLU、EP 训练等机制描述综合自官方技术报告（经 AlphaXiv 报告摘要转述）与 [vLLM 官方 Day-0 支持博客](https://vllm.ai/blog/2026-07-27-k3)（2026-07-27）。**"2.5× 扩展效率提升"为官方自报口径**，未见独立复现；早期版本并称"25% 训练效率提升"为官方自报，经 2026-08-02 核验官方各源均未公布该百分比，出处未确认，本文不再引用。
 
 ---
 

@@ -14,23 +14,28 @@
 | 维度 | Kimi K3 | DeepSeek V4 Pro | GLM-5.2 |
 | --- | --- | --- | --- |
 | 发布时间 | 2026-07 | 2026-04 | 2026-06 |
-| 总参数 / 激活 | **2.8T** / 50B | 1.6T / 49B | ~753B / 40B |
+| 总参数 / 激活 | **2.8T** / **104B**¹ | 1.6T / 49B | ~753B / 40B |
 | 上下文 | 1M | 1M | 1M |
-| 许可 | Modified MIT | MIT | MIT |
+| 许可 | Kimi K3 License² | MIT | MIT |
 | 权重状态 | 7/27 已发布 | 已发布 | 已发布 |
 | 多模态 | **原生（文本+图像）** | 仅文本 | 发布时仅文本 |
 | API 价格（$ / 1M token） | $3.00 / $15.00 | **$1.65 / $3.30** | $1.40 / $4.40 |
 | 吞吐（AA 实测，约） | ~62 tok/s | ~62 tok/s | **~168 tok/s** |
 | 自部署门槛 | 建议 64 卡 Supernode | 多节点集群（BF16） | 约 8×H100 |
 
+> ¹ K3 激活参数以[官方模型卡](https://huggingface.co/moonshotai/Kimi-K3)的 **104B** 为准（与主文档 §三 一致）。注意：DeepInfra 对比文曾标 50B，与官方口径不符，本文未采信。
+> ² 官方名称为 **Kimi K3 License**（自定义协议，MIT 式授权段 + 附加条款）；"Modified MIT" 是第三方对它的简称，见 [License 实务篇](./k3-license-practice.md)。
+
 > 价格来源：EmpirioLabs（2026-08-02）；吞吐来源：Artificial Analysis（经 DeepInfra 转述）。
+>
+> ³ K3 的 SWE-bench Verified 76.8% 为 DeepInfra 对比文转述口径；**官方模型卡完整评测表未公布该基准**，直接引用时需注意评测条件差异。
 
 ## 3. 基准横评：看什么、别信什么
 
 | 基准 | Kimi K3 | DeepSeek V4 Pro | GLM-5.2 | 说明 |
 | --- | --- | --- | --- | --- |
 | AA Intelligence Index | **57（#4 全球，超 Opus 4.8 的 56）** | 44（Max 推理） | 51 | 综合指数，K3 领先 |
-| SWE-bench Verified | 76.8% | **80.6%（组内最高）** | ~79–81%（前代 77.8%） | K3 反而不如两家 |
+| SWE-bench Verified | 76.8%³ | **80.6%（组内最高）** | ~79–81%（前代 77.8%） | K3 反而不如两家 |
 | GPQA Diamond | **93.5%** | 90.1% | 发布时未公布 | 科学推理 |
 | LiveCodeBench | — | **93.5%（全球 #1）** | — | 竞赛编程；Codeforces 3206 |
 | SWE-bench Pro | — | — | **62.1%（开源领先，超 GPT-5.5 的 58.6%）** | 长程编码 |
