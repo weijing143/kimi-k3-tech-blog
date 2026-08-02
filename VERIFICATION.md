@@ -112,6 +112,31 @@ curl -s -A "Mozilla/5.0" "https://arxiv.org/abs/2603.15031" | grep -oE "<title>[
 
 **新增第三方独立实测登记（官方表未收录）**：AA Intelligence Index 57、AA Coding Agent Index 57、Vals AI Index 74.70%、LiveBench 综合 79.2、LMArena Frontend Code Arena Elo 1679、SciCode 58.7%、τ³-Banking 33%、AA-LCR 74.7%、AA-Omniscience 46%/49%、Harvey LAB-AA 95%、AutomationBench-AA 53% —— 全部 C 级（第三方独立评测），已写入台账 §2.2。
 
+### 2026-08-03 · 第四轮：架构 / License / API / MoE-KDA 官方 × 第三方比对
+
+> 目的：按同一复现口径（官方与独立第三方数据一致 → 标记复现）补齐台账 §1/§3/§4/§5。第三方来源：openlm.ai、Context Studios、inimino.org、DeepInfra、devoriales、lorphic、trendingtopics.eu、Towards AI、36kr、Together/Fireworks/Modal/SiliconFlow/OpenRouter 等 API 平台、vLLM Day-0 博客。
+
+| # | 条目 | 官方值 | 第三方值 | 结论 | 复现状态 |
+| --- | --- | --- | --- | --- | --- |
+| 31 | 总参数 2.8T / 激活 104B | 模型卡 | 5 家独立一致 | 一致 | **复现** |
+| 32 | 93 层（69 KDA + 24 Gated MLA + 1 Dense） | 模型卡 | Context Studios 逐项一致 | 一致 | **复现** |
+| 33 | MoE 896/16（共享 2 未确认） | 模型卡 | vLLM/inimino/Context Studios/DeepInfra | 一致 | **复现** |
+| 34 | SiTU-GLU 激活函数 | 模型卡 | lorphic 确认 Sigmoid Tanh Unit | 一致 | **复现** |
+| 35 | MoonViT-V2 / 1M 上下文 / MXFP4-MXFP8 | 模型卡 | inimino/lorphic/Context Studios | 一致 | **复现** |
+| 36 | KDA 6.3× / 2.5× 扩展效率 | 官方博客 | acingai、Medium、DeepInfra、lorphic 均仅**转述官方声称** | 无独立实测 | **不标复现** |
+| 37 | License 五条条款 / MaaS 定义 / $20M 门槛 / 1 亿 MAU 署名 / 豁免 | LICENSE 原文 | 五家独立解读逐条一致 | 一致 | **复现** |
+| 38 | License 名称（非 Modified MIT） | LICENSE 标题 | Context Studios、inimino 纠正误传 | 一致 | **复现** |
+| 39 | 国际定价 $0.30/$3.00/$15.00 | 官方定价页 | ≥9 家平台同价售卖 | 一致 | **复现** |
+| 40 | 中国区定价 ¥2/¥20/¥100 | 官方定价页 | kimi 中文页 + 知乎确认 ¥20/¥100 | 一致 | **复现** |
+| 41 | reasoning_effort 默认 max | Quickstart | DeepInfra/lorphic 确认默认 max；但 DeepInfra 称 low/high 尚在规划 | 默认值一致，范围有时点差异 | **部分复现**（差异已标注） |
+| 42 | 完整回传 assistant message / 131K 输出上限 | Quickstart | lorphic 独立确认 | 一致 | **复现** |
+| 43 | Mooncake 缓存命中率 >90% | 官方博客 | lorphic/emergent 转述官方数字 | 无独立实测 | **不标复现** |
+| 44 | LatentMoE 源自 NVIDIA | vLLM Day-0 博客 | 链接 NVIDIA 研究页 + lorphic | 一致 | **复现** |
+| 45 | Quantile Balancing / EP 静态形状 | 技术报告转述 | AlphaXiv + vLLM Day-0 + lorphic 三源一致 | 一致 | **复现** |
+| 46 | KDA 公式可实现性 | 论文 | vLLM 独立实现 FlashKDA 内核并开源 | 工程验证 | **部分复现** |
+
+**口径原则（本轮确立并写入台账）**：①"复现（官方×第三方）"= 独立第三方**实测/实价/独立读取模型卡**与官方一致；②第三方**仅转述官方声称**（如 6.3×、2.5×、缓存命中率）不算复现，保持"未复现"；③"同源"数据（官方表收录的 AA 基准）如实标注同源转录核对。
+
 ## 5. 维护规则
 
 - 核验记录**只追加不删除**（保留历史，便于追溯口径变化）；

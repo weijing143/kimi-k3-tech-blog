@@ -23,19 +23,19 @@
 
 | 数据点 | 取值 | 来源（原文位置） | 核对日期 | 等级 | 复现状态 |
 | --- | --- | --- | --- | --- | --- |
-| 总参数量 / 激活参数 | 2.8T / 104B | [HF 模型卡](https://huggingface.co/moonshotai/Kimi-K3) Model Summary 表 | 2026-07-28 | A | 未复现 |
-| 层数与注意力组成 | 93 层；69 KDA + 24 Gated MLA + 1 Dense | 同上 | 2026-07-28 | A | 未复现 |
-| 注意力隐藏维度 / 头数 | 7168 / 96 | 同上 | 2026-07-28 | A | 未复现 |
-| MoE：专家数 / 激活 / 共享 | 896 / 16 / 2 | 同上 | 2026-07-28 | A | 未复现 |
-| Latent MoE 维度 / 单专家隐藏维度 | 3584 / 3072 | 同上 | 2026-07-28 | A | 未复现 |
-| 激活函数 | SiTU-GLU | 同上 | 2026-07-28 | A | 未复现 |
+| 总参数量 / 激活参数 | 2.8T / 104B | [HF 模型卡](https://huggingface.co/moonshotai/Kimi-K3) Model Summary 表 | 2026-08-03 | A | **复现**（官方×第三方：[openlm.ai](https://openlm.ai/kimi-k3/)、[Context Studios](https://www.contextstudios.ai/blog/read-the-kimi-k3-license-before-you-read-the-benchmarks)、[inimino.org](https://inimino.org/kimi-k3-open-weights-license/)、[DeepInfra](https://deepinfra.com/blog/kimi-k3-model-analysis-api-provider-comparison)、[devoriales](https://devoriales.com/kimi-k3-open-weights-what-moonshot-actually-shipped) 一致） |
+| 层数与注意力组成 | 93 层；69 KDA + 24 Gated MLA + 1 Dense | 同上 | 2026-08-03 | A | **复现**（官方×第三方：Context Studios 逐项一致） |
+| 注意力隐藏维度 / 头数 | 7168 / 96 | 同上 | 2026-07-28 | A | 未复现（无第三方逐项数据） |
+| MoE：专家数 / 激活 / 共享 | 896 / 16 / 2 | 同上 | 2026-08-03 | A | **复现**（官方×第三方：vLLM Day-0 博客、inimino、Context Studios、DeepInfra 均确认 896/16） |
+| Latent MoE 维度 / 单专家隐藏维度 | 3584 / 3072 | 同上 | 2026-07-28 | A | 未复现（无第三方逐项数据） |
+| 激活函数 | SiTU-GLU | 同上 | 2026-08-03 | A | **复现**（官方×第三方：lorphic 技术解析确认 Sigmoid Tanh Unit） |
 | SiTU-GLU 上限常数 β₁β₂=100 | 4 × 25 | [AlphaXiv 技术报告摘要](https://www.alphaxiv.org/overview/2607.kimi-k3-report) | 2026-07-28 | C（转述官方报告） | 未复现 |
-| 视觉编码器 | MoonViT-V2，401M | HF 模型卡 Model Summary 表 | 2026-07-28 | A | 未复现 |
-| 词表 / 上下文 | 160K / 1,048,576 | 同上 | 2026-07-28 | A | 未复现 |
-| 量化 | MXFP4 权重 / MXFP8 激活（QAT） | 同上 | 2026-07-28 | A | 未复现 |
-| 模态 | 模型卡字段 "Text, Image"；视频见介绍与 Quickstart | HF 模型卡 + Quickstart | 2026-07-28 | A（口径已加注） | 未复现 |
-| KDA 6.3× 解码提速 | vs MLA 全注意力 @1M 上下文 | 官方博客 / Kimi Linear 论文 | 2026-07-28 | B | 未复现 |
-| 2.5× 扩展效率（vs K2） | 约 2.5× | 官方博客 | 2026-07-28 | B | 未复现 |
+| 视觉编码器 | MoonViT-V2，401M | HF 模型卡 Model Summary 表 | 2026-08-03 | A | **复现**（官方×第三方：inimino 确认 MoonViT-V2；401M 数值无第三方逐项） |
+| 词表 / 上下文 | 160K / 1,048,576 | 同上 | 2026-08-03 | A | **复现**（官方×第三方：lorphic、Context Studios 确认 1,048,576 上下文） |
+| 量化 | MXFP4 权重 / MXFP8 激活（QAT） | 同上 | 2026-08-03 | A | **复现**（官方×第三方：vLLM Day-0 博客、Context Studios、lorphic 一致） |
+| 模态 | 模型卡字段 "Text, Image"；视频见介绍与 Quickstart | HF 模型卡 + Quickstart | 2026-08-03 | A（口径已加注） | **复现**（官方×第三方：DeepInfra、inimino 确认 Text+Image） |
+| KDA 6.3× 解码提速 | vs MLA 全注意力 @1M 上下文 | 官方博客 / Kimi Linear 论文 | 2026-08-03 | B | **未复现**（第三方如 acingai、Medium 均为**转述官方声称**，无独立实测数据） |
+| 2.5× 扩展效率（vs K2） | 约 2.5× | 官方博客 | 2026-08-03 | B | **未复现**（DeepInfra / lorphic 转述并明确标注 vendor-reported，无独立复现） |
 | AttnRes 训练/推理开销 | 论文原文：marginal / minimal | arXiv:2603.15031 | 2026-08-02 | A（定性） | 未复现 |
 
 ## 2. 基准评测（主文档 §六，31 项）
@@ -83,33 +83,35 @@
 
 | 数据点 | 来源（原文位置） | 核对日期 | 等级 | 复现状态 |
 | --- | --- | --- | --- | --- |
-| 五条条款全部解读 | [LICENSE 原文](https://huggingface.co/moonshotai/Kimi-K3/raw/main/LICENSE) 全文 | 2026-07-28 | A | 未复现（原文核对） |
-| "MaaS" 定义与两类豁免 | 原文条款 2 | 2026-07-28 | A | 未复现（原文核对） |
-| $20M 年收入门槛（全部合计收入口径） | 原文条款 2 | 2026-07-28 | A | 未复现（原文核对） |
-| 1 亿 MAU / $20M 月收署名（"或"关系） | 原文条款 3 | 2026-07-28 | A | 未复现（原文核对） |
-| 内部使用与认证伙伴豁免 | 原文条款 4 | 2026-07-28 | A | 未复现（原文核对） |
+| 五条条款全部解读 | [LICENSE 原文](https://huggingface.co/moonshotai/Kimi-K3/raw/main/LICENSE) 全文 | 2026-08-03 | A | **复现**（官方×第三方：trendingtopics.eu、Context Studios、Towards AI、inimino.org、36kr 五家独立解读逐条一致） |
+| "MaaS" 定义与两类豁免 | 原文条款 2 | 2026-08-03 | A | **复现**（官方×第三方：trendingtopics 与 36kr 均确认 "meaningful control" 定义及内嵌产品/转发两类豁免） |
+| $20M 年收入门槛（全部合计收入口径） | 原文条款 2 | 2026-08-03 | A | **复现**（官方×第三方：五家解读均确认 $20M / 连续 12 个月 / 关联公司合计） |
+| 1 亿 MAU / $20M 月收署名（"或"关系） | 原文条款 3 | 2026-08-03 | A | **复现**（官方×第三方：inimino 表格、trendingtopics、Context Studios 均确认"或"关系） |
+| 内部使用与认证伙伴豁免 | 原文条款 4 | 2026-08-03 | A | **复现**（官方×第三方：trendingtopics、Context Studios 确认内部使用豁免；认证伙伴豁免 Context Studios 亦确认） |
+| License 名称 "Kimi K3 License"（非 Modified MIT） | 官方 LICENSE 标题 | 2026-08-03 | A | **复现**（官方×第三方：Context Studios、inimino 明确纠正"Modified MIT"误传） |
 
 ## 4. API 与定价（主文档 §八、Agent 篇）
 
 | 数据点 | 来源 | 核对日期 | 等级 | 复现状态 |
 | --- | --- | --- | --- | --- |
-| 国际定价 $0.30 / $3.00 / $15.00 每 MTok | 官方定价页 | 2026-07-28 | A | 未复现 |
-| 中国区定价 ¥2 / ¥20 / ¥100 | API 平台定价页 | 2026-07-28 | A | 未复现 |
-| `reasoning_effort` low / high / max（默认 max） | [Quickstart](https://platform.kimi.com/docs/guide/kimi-k3-quickstart) | 2026-07-28 | A | 未复现 |
-| 完整回传 assistant message（reasoning_content + tool_calls） | Quickstart / HF 模型卡 §6 | 2026-07-28 | A | 未复现 |
-| 视频输入经 Files API 上传引用 | Quickstart 视觉输入文档 | 2026-07-28 | A | 未复现 |
-| 默认最大输出 131,072 tokens（`max_completion_tokens`） | Quickstart | 2026-07-28 | A | 未复现 |
-| 编程负载缓存命中率 >90% | 官方博客（Mooncake 架构） | 2026-07-28 | B | 未复现 |
+| 国际定价 $0.30 / $3.00 / $15.00 每 MTok | 官方定价页 | 2026-08-03 | A | **复现**（官方×第三方：Together、Fireworks、Modal、SiliconFlow、Vercel、OpenRouter、DeepInfra 等至少 9 家平台实际按同价售卖，dev.to 全平台对比一致；OpenRouter 页面标注 $2.90/$14 系扣除其手续费后的净价口径，主体一致） |
+| 中国区定价 ¥2 / ¥20 / ¥100 | API 平台定价页 | 2026-08-03 | A | **复现**（官方×第三方：[kimi.com 中文定价页](https://www.kimi.com/zh-cn/resources/kimi-k3-pricing) 与[知乎解读](https://zhuanlan.zhihu.com/p/2063928962716325110)确认 ¥20/¥100 ≈ $3/$15） |
+| `reasoning_effort` low / high / max（默认 max） | [Quickstart](https://platform.kimi.com/docs/guide/kimi-k3-quickstart) | 2026-08-03 | A | **部分复现**：默认 max 已被 DeepInfra、lorphic 等独立确认；但 DeepInfra 称 low/high 为 "planned for subsequent updates"，与官方文档存在时点口径差异 → 标注差异，默认值可复现 |
+| 完整回传 assistant message（reasoning_content + tool_calls） | Quickstart / HF 模型卡 §6 | 2026-08-03 | A | **复现**（官方×第三方：lorphic 技术解析独立确认需保留完整 assistant message 含 reasoning history） |
+| 视频输入经 Files API 上传引用 | Quickstart 视觉输入文档 | 2026-07-28 | A | 未复现（无第三方逐项确认） |
+| 默认最大输出 131,072 tokens（`max_completion_tokens`） | Quickstart | 2026-08-03 | A | **复现**（官方×第三方：lorphic 确认 default 131,072，可配至 1M） |
+| 编程负载缓存命中率 >90% | 官方博客（Mooncake 架构） | 2026-08-03 | B | 未复现（第三方 lorphic / emergent 均**转述官方 Mooncake 数字**，无独立实测） |
 
 ## 5. MoE / KDA 系统实现（LatentMoE 篇 §6、KDA 篇）
 
 | 数据点 | 来源 | 核对日期 | 等级 | 复现状态 |
 | --- | --- | --- | --- | --- |
-| LatentMoE 由 NVIDIA 提出及带宽/通信收益 | [vLLM Day-0 博客](https://vllm.ai/blog/2026-07-27-k3) | 2026-07-28 | A（官方引擎方） | 未复现 |
-| vLLM 两套后端（TRT-LLM-Gen / MegaMoE）与 EPLB | 同上 | 2026-07-28 | A | 未复现 |
-| Quantile Balancing 机制描述 | AlphaXiv 报告摘要（转述官方技术报告） | 2026-07-28 | C | 未复现 |
-| EP 静态形状 / 无 host sync 训练 | 同上 | 2026-07-28 | C | 未复现 |
-| KDA 递推公式与 FLA/vLLM 实现追踪 | [Kimi Linear 论文](https://arxiv.org/abs/2510.26692) + 开源仓库 | 2026-07-28 | A（论文）/ D（推导解读） | 未复现 |
+| LatentMoE 由 NVIDIA 提出及带宽/通信收益 | [vLLM Day-0 博客](https://vllm.ai/blog/2026-07-27-k3) | 2026-08-03 | A（官方引擎方） | **复现**（官方×第三方：vLLM 博客链接 [NVIDIA LatentMoE 研究页](https://research.nvidia.com/labs/nemotron/LatentMoE/)，lorphic 亦确认） |
+| vLLM 两套后端（TRT-LLM-Gen / MegaMoE）与 EPLB | 同上 | 2026-08-03 | A | 未复现（vLLM 官方自述其实现，无 Moonshot 之外独立来源；工程可复跑：vLLM 已开源 K3 服务代码） |
+| Quantile Balancing 机制描述 | AlphaXiv 报告摘要（转述官方技术报告） | 2026-08-03 | C→A（vLLM Day-0 博客[链接 kexue.fm 原文](https://kexue.fm/archives/11619)确认） | **复现**（官方×第三方：AlphaXiv 转述与 vLLM 官方博客、lorphic 三源一致） |
+| EP 静态形状 / 无 host sync 训练 | 同上 | 2026-08-03 | C | **复现**（官方×第三方：AlphaXiv 与 lorphic 独立转述一致） |
+| KDA 递推公式与 FLA/vLLM 实现追踪 | [Kimi Linear 论文](https://arxiv.org/abs/2510.26692) + 开源仓库 | 2026-08-03 | A（论文）/ D（推导解读） | **部分复现**：vLLM Day-0 博客披露其独立实现 FlashKDA 内核并开源（工程层面对公式可实现的验证）；公式本身未逐项独立推导 |
+| KDA 6.3× 解码提速 / 2.5× 扩展效率 | 官方博客 | 2026-08-03 | B | 未复现（第三方 acingai、Medium 等仅转述官方声称，无独立实测数据；vLLM 实测的是 118→370 tok/s 服务端性能，口径不同） |
 
 ## 6. 代码与实验（examples/、自部署手册）
 
@@ -125,11 +127,14 @@
 
 1. runbook §5 全部延迟/吞吐/显存表格 —— 待真实硬件实测；
 2. "2.5× 扩展效率"—— 官方自报，无第三方复现；"25% 训练效率"—— 2026-08-02 核验：官方各源均未公布该百分比，出处未确认，已从各篇撤回；
-3. QB 精确公式（更新频率、分位数估计方式）—— 待核对技术报告原文；
+3. QB 精确公式（更新频率、分位数估计方式）—— 机制描述已三源确认（§5），但精确公式仍待核对技术报告原文；
 4. 第三方（如 GPT 评审）全文逐句校对 —— 未做；
 5. 代码对真实 K3 API / 自部署 vLLM/SGLang 的端到端验证 —— 未做，需 API 额度与硬件；
 6. 官方 31 项中仅 6 项获得第三方独立实测比对（§2.1）；其余 25 项（FrontierSWE、Program Bench、KCB 2.0、BrowseComp、SWE Marathon、MMMU-Pro、ZeroBench 等）暂无公开第三方独立实测，仍为 B 级官方自报未复现；
-7. Terminal-Bench 2.1 / DeepSWE 官方值与 AA 独立 harness 存在差异（3.3pt / 3.5pt）—— 差异源于 harness 而非模型能力，属口径差异，持续关注。
+7. Terminal-Bench 2.1 / DeepSWE 官方值与 AA 独立 harness 存在差异（3.3pt / 3.5pt）—— 差异源于 harness 而非模型能力，属口径差异，持续关注；
+8. KDA 6.3× / 2.5× 扩展效率 / Mooncake 缓存命中率 >90% —— 第三方仅有转述，无独立实测，保持 B 级未复现；
+9. `reasoning_effort` low/high 档位 —— DeepInfra 称 "planned"，与官方 Quickstart 文档存在时点口径差异，待官方确认；
+10. 视频输入 Files API / 注意力维度 7168/96 / Latent MoE 3584/3072 —— 无第三方逐项数据，保持未复现。
 
 ## 维护说明
 
