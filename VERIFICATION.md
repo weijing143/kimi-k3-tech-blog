@@ -78,6 +78,22 @@ curl -s -A "Mozilla/5.0" "https://arxiv.org/abs/2603.15031" | grep -oE "<title>[
 | 9 | 论文号 2603.15031 / 2510.26692 | 引用 | arXiv 验证**真实存在** | A | 无需修改 | — |
 | 10 | vLLM 118→370 tok/s、DSpark 等 | vLLM 官方博客 | 原文一致 | B | 无需修改（标注 vLLM 自测） | — |
 
+### 2026-08-02 · 全量补核（第二轮：主文档 §5/§7/§8/§9/§12 + KDA 篇）
+
+| # | 条目 | 官方源 | 结果 | 级 |
+| --- | --- | --- | --- | --- |
+| 11 | §5 全均衡 EP（static shapes / no host sync） | 官方博客原文 | 一致 | A |
+| 12 | §5 vLLM KDA prefill-cache 贡献 | 官方博客原文 | 一致 | A |
+| 13 | §5 Mooncake 缓存命中率 >90%（编程负载） | 官方博客原文 | 一致 | A |
+| 14 | §5 64+ 加速卡 Supernode 建议 | 官方博客原文 | 一致 | A |
+| 15 | §三 价格 $0.30 / $3.00 / $15.00 | 官方博客原文 | 一致 | A |
+| 16 | §7 Arena.ai Elo 1679（登顶超 Fable 5） | Arena 官方公告 | 一致 | A |
+| 17 | §8 芯片设计案例（48h / 4mm² / 100MHz / 8700 tok/s / 1.46M cells） | 官方博客原文 | 一致 | A |
+| 18 | §8 MiniTriton / I-Love-Q（2h / 20+ 论文 / 300+ EOS / 3000+ 行） | 官方博客原文 | 一致 | A |
+| 19 | §9 reasoning_effort low/high/max（默认 max） | 官方 API quickstart | 一致 | A |
+| 20 | KDA 篇 6.3× TPOT（1.84 vs 11.48ms @1M）与 3:1 混合比 | Kimi Linear 官方仓库 | 一致（48B 验证模型口径已标注） | A |
+| 21 | §7.2 AA 单任务成本 $0.94 / token 效率 +21% | Artificial Analysis（第三方） | 保留 C 级标注 | C |
+
 ## 5. 维护规则
 
 - 核验记录**只追加不删除**（保留历史，便于追溯口径变化）；
