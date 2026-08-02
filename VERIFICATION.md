@@ -41,6 +41,26 @@
 
 5. **修正与记录**：不一致 → 改数据 + 文中加注 + 更新 `SOURCES.md` 台账 + 追加本清单 §4 记录。
 
+### 实操命令速查（anysearch）
+
+```bash
+# 批量搜多个角度（拿候选链接 + 摘要里的数字）
+python3 ~/.hermes/skills/anysearch/scripts/anysearch_cli.py batch_search \
+  --queries '[{"query":"Kimi K3 activated parameters official model card","max_results":5},
+              {"query":"Kimi K3 SWE-bench Verified score","max_results":5}]'
+
+# 抓一级来源全文（模型卡 / 论文 / LICENSE / 博客）
+python3 ~/.hermes/skills/anysearch/scripts/anysearch_cli.py extract "https://huggingface.co/moonshotai/Kimi-K3"
+
+# 验证论文号存在（arXiv API 有时空响应，用页面抓取兜底）
+curl -s -A "Mozilla/5.0" "https://arxiv.org/abs/2603.15031" | grep -oE "<title>[^<]+</title>"
+```
+
+**实战避坑**：
+- 输出含二进制字符时 `grep` 会报 `binary file matches` → 加管道 `| strings` 或用 `grep -a`；
+- `extract` 遇到 403/404（如 MarkTechPost、部分 Medium）→ 换同主题的供应商博客（deepinfra / empiriolabs 通常可抓），或直接用搜索摘要里的数字并标注；
+- **第三方对比文必须回官方核对**：DeepInfra 曾把 K3 激活参数写成 50B（官方 104B），只信第三方就会带入错误（见 §4 记录 #1）。
+
 ## 4. 核验记录（只追加，不删除）
 
 ### 2026-08-02 · 全仓库首轮核验
