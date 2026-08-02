@@ -62,6 +62,11 @@
 | Terminal-Bench 2.1 | 88.3（Kimi Code） | 85% | [AA Terminal-Bench v2.1 页](https://artificialanalysis.ai/evaluations/terminalbench-v2-1) | **有差异**（AA 独立 harness vs 官方 Kimi Code，差 3.3pt） | 外部实测存在，**不标复现** |
 | DeepSWE | 67.5（Kimi Code） | 64% | AA Coding Agent Index（AA LinkedIn 公布） | **有差异**（harness 不同） | 外部实测存在，**不标复现** |
 | AutomationBench | 30.8（600-task subset） | 53%（AutomationBench-AA） | AA（emergent.sh 转述） | **口径不同**（AA 版 vs 官方子集版，不可直接比） | 不可比，**不标复现** |
+| MMMU-Pro | 81.6 | 84.7%（AA-MMMU-Pro） | [BenchLM 转述 AA 快照](https://benchlm.ai/benchmarks/aammmupro)（2026-08-02） | **有差异**（AA 独立协议 vs 官方协议，差 3.1pt） | 外部实测存在，**不标复现** |
+| Toolathlon | 76.5（官方表） | 73.2 | BenchmarkList 收录早期第三方值（与 benchmarks.json 注记 "earlier third-party entry 73.2" 一致） | **有差异**（第三方早期值 vs 官方最终值） | 外部实测存在，**不标复现** |
+| Job Bench | 54.3（官方表） | 52.9 | BenchmarkList 收录早期第三方值（与 benchmarks.json 注记一致） | **有差异**（第三方早期值 vs 官方最终值） | 外部实测存在，**不标复现** |
+| Program Bench | 77.8 | 77.8（llm-stats 标注 **self-reported**） | [llm-stats.com](https://llm-stats.com/benchmarks/program-bench) | 无独立实测（llm-stats 明确标注 5 项全为官方自报） | **不标复现** |
+| BrowseComp | 91.2 | 91.2 | BenchLM 收录（转录官方值，非独立实测） | 无独立实测 | **不标复现** |
 
 ### 2.2 第三方独立实测（官方表未收录，2026-08-03 采集）
 
@@ -69,15 +74,19 @@
 | --- | --- | --- | --- | --- |
 | AA Intelligence Index v4.1 | 57（排名 #3/#4，开放权重第一） | [AA 模型页](https://artificialanalysis.ai/models/kimi-k3) | C（第三方独立评测） | 外部实测 |
 | Vals AI Index | 74.70%（#2/#3） | [vals.ai/benchmarks](https://www.vals.ai/benchmarks)（2026-07-23 更新） | C | 外部实测 |
+| SWE-bench Verified | **93.40%**（Vals 独立实测，mini-swe-agent harness） | [vals.ai/benchmarks/swebench](https://vals.ai/benchmarks/swebench)（2026-07-22 更新） | C | 外部实测（官方 31 项未收录此基准，为 Vals 自行补测） |
 | LiveBench（综合分） | 79.2（8 个子项 62.2–90.7） | [livebench.ai](https://livebench.ai/) | C | 外部实测 |
 | LMArena Frontend Code Arena | Elo 1679（#1，超 Fable 5） | Arena 官方公告（2026-07-16） | A（榜单官方公告） | 外部实测 |
 | AA Coding Agent Index | 57（#5，开放权重第一） | AA 官方公布 | C | 外部实测 |
+| AA-MMMU-Pro | 84.7% | [BenchLM 转述 AA 快照](https://benchlm.ai/benchmarks/aammmupro)（2026-08-02） | C | 外部实测（与官方 MMMU-Pro 81.6 口径不同，见 §2.1） |
 | SciCode | 58.7% | AA 快照（emergent.sh，2026-07-23） | C | 外部实测 |
 | τ³-Banking | 33% | AA 快照（emergent.sh，2026-07-23） | C | 外部实测 |
 | AA-LCR（长上下文） | 74.7% | AA 快照（emergent.sh，2026-07-23） | C | 外部实测 |
 | AA-Omniscience（准确率 / 非幻觉率） | 46% / 49% | AA 快照（emergent.sh，2026-07-23） | C | 外部实测 |
 | Harvey LAB-AA | 95%（#1） | AA（emergent.sh 转述） | C | 外部实测 |
 | AutomationBench-AA | 53%（#1） | AA（emergent.sh 转述） | C | 外部实测 |
+
+> **聚合站说明**：BenchmarkList（benchmarklist.com）、BenchLM（benchlm.ai）等为转录聚合站，收录官方自报 + 第三方实测混排，**不构成独立实测来源**，仅用作交叉索引（如 Toolathlon 73.2 / Job Bench 52.9 的早期第三方值，与官方表注记吻合）。引用时需回原始来源核对。
 
 ## 3. License（License 篇）
 
@@ -130,7 +139,7 @@
 3. QB 精确公式（更新频率、分位数估计方式）—— 机制描述已三源确认（§5），但精确公式仍待核对技术报告原文；
 4. 第三方（如 GPT 评审）全文逐句校对 —— 未做；
 5. 代码对真实 K3 API / 自部署 vLLM/SGLang 的端到端验证 —— 未做，需 API 额度与硬件；
-6. 官方 31 项中仅 6 项获得第三方独立实测比对（§2.1）；其余 25 项（FrontierSWE、Program Bench、KCB 2.0、BrowseComp、SWE Marathon、MMMU-Pro、ZeroBench 等）暂无公开第三方独立实测，仍为 B 级官方自报未复现；
+6. 官方 31 项基准复现覆盖（2026-08-03 扩大搜索后）：6 项复现、8 项有第三方实测但口径/数值有差异（§2.1）、**17 项（FrontierSWE、KCB 2.0、SWE Marathon、BrowseComp、MMMU-Pro、ZeroBench 等）暂无公开独立实测**，仍为 B 级官方自报未复现；
 7. Terminal-Bench 2.1 / DeepSWE 官方值与 AA 独立 harness 存在差异（3.3pt / 3.5pt）—— 差异源于 harness 而非模型能力，属口径差异，持续关注；
 8. KDA 6.3× / 2.5× 扩展效率 / Mooncake 缓存命中率 >90% —— 第三方仅有转述，无独立实测，保持 B 级未复现；
 9. `reasoning_effort` low/high 档位 —— DeepInfra 称 "planned"，与官方 Quickstart 文档存在时点口径差异，待官方确认；

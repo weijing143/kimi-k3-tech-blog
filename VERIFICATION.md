@@ -137,6 +137,22 @@ curl -s -A "Mozilla/5.0" "https://arxiv.org/abs/2603.15031" | grep -oE "<title>[
 
 **口径原则（本轮确立并写入台账）**：①"复现（官方×第三方）"= 独立第三方**实测/实价/独立读取模型卡**与官方一致；②第三方**仅转述官方声称**（如 6.3×、2.5×、缓存命中率）不算复现，保持"未复现"；③"同源"数据（官方表收录的 AA 基准）如实标注同源转录核对。
 
+### 2026-08-03 · 第五轮：剩余未复现基准扩大搜索（BenchmarkList / BenchLM / Vals / llm-stats 交叉索引）
+
+> 目的：对 §2 中此前无第三方数据的剩余基准做扩大搜索，确认是否有独立实测可标记复现，或明确"无独立实测"。
+
+| # | 基准 | 官方值 | 第三方数据 | 来源 | 结论 | 复现状态 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 47 | MMMU-Pro | 81.6 | 84.7%（AA-MMMU-Pro） | BenchLM 转述 AA 快照（2026-08-02） | 有差异（AA 协议 vs 官方协议，3.1pt） | 外部实测存在，不标复现 |
+| 48 | Toolathlon | 76.5 | 73.2（早期第三方） | BenchmarkList 收录，与官方表注记吻合 | 有差异（第三方早期值） | 外部实测存在，不标复现 |
+| 49 | Job Bench | 54.3 | 52.9（早期第三方） | BenchmarkList 收录，与官方表注记吻合 | 有差异（第三方早期值） | 外部实测存在，不标复现 |
+| 50 | Program Bench | 77.8 | 77.8 | llm-stats 明确标注 **self-reported** | 无独立实测（转录官方） | **不标复现** |
+| 51 | BrowseComp | 91.2 | 91.2 | BenchLM 收录（转录官方） | 无独立实测 | **不标复现** |
+| 52 | SWE-bench Verified | 官方未收录 | **93.40%**（Vals 独立实测） | vals.ai/benchmarks/swebench | 新增第三方实测项 | 外部实测（入 §2.2） |
+| 53 | FrontierSWE / KCB 2.0 / MLS Bench / SWE Marathon / PostTrain / DeepSearchQA / MCP Atlas / DECK-Bench / OfficeQA / Spreadsheet / MathVision / CharXiv / OmniDoc / BabyVision / PerceptionBench / WorldVQA / ZeroBench（17 项） | — | 无独立实测（BenchmarkList 等聚合站均转录官方自报，无独立 harness 数据） | 多站交叉搜索 | 无独立实测 | 保持未复现 |
+
+**扩大搜索结论**：31 项基准中，最终 **6 项复现**（GPQA-Diamond、HLE-Full×2、APEX-Agents、GDPval-AA v2、AA-Briefcase，其中后三者含同源注记）、**8 项有第三方实测但口径/数值有差异**（Terminal-Bench 2.1、DeepSWE、AutomationBench、MMMU-Pro、Toolathlon、Job Bench，另 Program Bench / BrowseComp 仅转录）、**17 项无任何公开独立实测**（Moonshot 内部或独占基准，第三方无法复跑）。新增 Vals SWE-bench Verified 93.40% 第三方实测一项入 §2.2。
+
 ## 5. 维护规则
 
 - 核验记录**只追加不删除**（保留历史，便于追溯口径变化）；
