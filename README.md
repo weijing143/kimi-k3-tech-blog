@@ -45,6 +45,10 @@
 
 另附：[《发布帖文案（长版 + 短版）》](./posts/release-announcement.md) —— 仓库对外发布用的介绍文案（非专题）
 
+## 结构化数据（data/）
+
+- [`data/benchmarks.json`](./data/benchmarks.json) —— 主文档 §六 的 31 项官方基准结构化存档（官方模型卡口径，2026-07-28 抓取），由 CI（`scripts/check_benchmarks.py`）自动校验数量、唯一性与字段合法性。如需新增/修正条目，直接改 JSON 并补充对应主文档表格备注；**实测数据请走 [benchmark-data.yml Issue 模板](.github/ISSUE_TEMPLATE/benchmark-data.yml)，勿写入此官方口径文件**。
+
 ## 资料来源
 
 内容整理自以下公开资料，版权归原作者 / 机构所有：
