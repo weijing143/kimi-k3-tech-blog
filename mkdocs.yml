@@ -62,6 +62,7 @@ nav:
       - 自部署手册: posts/k3-selfhost-runbook.md
       - 三方横评: posts/k3-vs-v4pro-vs-glm52.md
       - 生态追踪: posts/k3-ecosystem-tracking.md
+      - 网络安全评估: posts/k3-cyber-security.md
       - 发布文案: posts/release-announcement.md
   - 证据台账: SOURCES.md
   - 结构化数据:

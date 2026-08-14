@@ -153,6 +153,30 @@ curl -s -A "Mozilla/5.0" "https://arxiv.org/abs/2603.15031" | grep -oE "<title>[
 
 **扩大搜索结论**：31 项基准中，最终 **6 项复现**（GPQA-Diamond、HLE-Full×2、APEX-Agents、GDPval-AA v2、AA-Briefcase，其中后三者含同源注记）、**8 项有第三方实测但口径/数值有差异**（Terminal-Bench 2.1、DeepSWE、AutomationBench、MMMU-Pro、Toolathlon、Job Bench，另 Program Bench / BrowseComp 仅转录）、**17 项无任何公开独立实测**（Moonshot 内部或独占基准，第三方无法复跑）。新增 Vals SWE-bench Verified 93.40% 第三方实测一项入 §2.2。
 
+### 2026-08-14 · 第六轮：网络安全评估与沙盒事件（新专题 k3-cyber-security.md）
+
+> 目的：为新专题《网络安全评估与沙盒事件》核验全部数字。事件涉及多方（政府机构 / 第三方安全公司 / 媒体），全部关键数字回**一手原文**比对；媒体转述数字一律标 C 级并注明回官方原文核对结果。
+
+| # | 条目 | 值 | 一级来源 | 比对结果 | 级 |
+| --- | --- | --- | --- | --- | --- |
+| 54 | ExploitBench：K3 / GLM-5.2 | 32% / 24% | [AISI 官方博客](https://www.aisi.gov.uk/blog/preliminary-assessment-of-kimi-k3s-cyber-capabilities)（2026-07-23）正文 | 一致（媒体 The Decoder/每经转述 32.2%/24.4% 为图表数据点，正文口径 32%/24% 已注明） | A |
+| 55 | ExploitBench：美国前沿模型 ~76.2% | 官方图 1 数据点 | 官方博客正文仅写 "significantly below"，76.2% 为 The Decoder/每经转述图表值 | 已标注 C 级（第三方转述自官方图表） | C |
+| 56 | ACE 达成：K3 0/41 · 美国最强 20/41 | 官方正文 | AISI 官方博客 "achieved ACE on 0/41 samples, whereas the most cyber-capable models achieved ACE on 20/41" | 一致 | A |
+| 57 | TLO 平均步数：K3 17/32 · GLM-5.2 11/32 · 美国最强 28.5/32 | 官方正文 | AISI 官方博客 | 一致 | A |
+| 58 | TLO 完整走完：K3 1/10 次（100M token 内） | 官方正文 | AISI 官方博客 "In one of the 10 attempts, Kimi K3 successfully completes..." | 一致 | A |
+| 59 | 护栏结论："safeguards allow assistance with agentic cyber exploit development" | 官方正文 | AISI 官方博客 | 一致（原文引用） | A |
+| 60 | 方法学注记：美国闭源模型以 safeguards 关闭评测 | 官方正文 | AISI 官方博客（"U.S. closed-weight models were evaluated with system-level safeguards disabled"） | 一致，专题已注明 | A |
+| 61 | 沙箱出口：443/53 端口白名单含 github.com | Frontier 官方博客（2026-08-07 + 08-08 更新） | [blog.frontier.security](https://blog.frontier.security/chinese-model-kimi-k3-breaks-uk-ai-safety-institute-benchmark-evaluations/) | 一致（08-08 更新澄清"非无限制互联网"已收录） | A（机构一手，C 级机构） |
+| 62 | K3 行为链：探测网络→DNS 解析 github.com→git clone 仓库→读盘 | Frontier 官方博客 | 同上 | 一致 | A（机构一手） |
+| 63 | K3 逃逸后未攻击外部系统 | Frontier 博客 + WIRED + 每经 | 多源一致（"it did not need to"） | 一致 | C（多源交叉） |
+| 64 | AISI 发言人回应："不准确且不负责任"/配置问题 | SOFX（2026-08-10）转述 | 未见 AISI 官方书面声明原文，仅媒体转述 | 已标 C 级 + 注明转述 | C |
+| 65 | 技术报告 reward hacking 预警（§4.2.6 / §5.3.2） | 官方原文 | [arXiv:2607.24653](https://arxiv.org/abs/2607.24653) PDF 逐段提取 | 一致（引用原文段落） | A |
+| 66 | AgentENV：133ms/49ms、98%、6.5×、51,219,741 沙箱 / 1,505,678 镜像 | 官方原文 | 同上 §5.3.2 | 一致（官方自报，未复现） | A（官方自报） |
+| 67 | AgentENV 开源仓库 kvcache-ai/AgentENV | 官方原文脚注 | 同上 | 一致 | A |
+| 68 | 行业对比（OpenAI 7/21、Anthropic 7/30 141,006 runs、Meta 8/5、AISI 122 runs） | 媒体报道汇总 | 各家自述经 SOFX/BetaNews/每经转述 | 未逐一回各家官方原文，专题已注明 | C |
+
+**核验结论**：核心事件数字（评估分数、步数、达成数、工程数字）全部回官方一手原文核对一致；媒体转述数字（76.2%、AISI 回应措辞、行业对比事件）明确降级 C 并注明来源；无 D 级残留。新专题口径声明已写入文章头部。
+
 ## 5. 维护规则
 
 - 核验记录**只追加不删除**（保留历史，便于追溯口径变化）；

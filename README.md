@@ -2,7 +2,7 @@
 
 ![CI](https://github.com/weijing143/kimi-k3-tech-blog/actions/workflows/test.yml/badge.svg)
 ![License](https://img.shields.io/badge/License-CC%20BY--NC%204.0-8ca0ff)
-![Topics](https://img.shields.io/badge/Topics-8%20篇专题-34d399)
+![Topics](https://img.shields.io/badge/Topics-10%20篇专题-34d399)
 
 本仓库是对 Moonshot AI（月之暗面）于 2026-07-16 发布的 **Kimi K3** 模型的技术资料整理，仅供个人学习参考。权重与技术报告已于 2026-07-27 发布（Hugging Face `moonshotai/Kimi-K3`，Kimi K3 License）。
 
@@ -47,6 +47,7 @@
 - [《Kimi K3 微调实践：3T 模型的 LoRA 路线、成本账与奖励设计》](./posts/k3-finetune-practice.md) —— LoRA rank 与容量、RL 成本实测（~$65/20 步）、Countdown vs Frozen Lake 奖励设计对比
 - [《Kimi K3 License 实务：商用、微调和再分发的条款对照与部署清单》](./posts/k3-license-practice.md) —— 逐条拆解 + 场景决策矩阵 + 合规清单，纠正"K3 是 MIT"的误传
 - [《Kimi K3 自部署实验手册：从 8× H100 到 64 卡 Supernode》](./posts/k3-selfhost-runbook.md) —— 显存算术、启动命令、压测方法学与留空结果表，配套脚本见 [examples/k3_selfhost_bench/](./examples/k3_selfhost_bench/)
+- [《Kimi K3 网络安全评估与沙盒事件：官方联合评测、"抄答案"风波与 reward hacking 的工程防御》](./posts/k3-cyber-security.md) —— UK AISI/CAISI 联合评测（ExploitBench 32%、TLO 17/32 步）、Frontier Security 沙盒逃逸披露、AISI 归责争议与技术报告的 AgentENV 防御设计（2026-08-14 快照）
 
 另附：[《发布帖文案（长版 + 短版）》](./posts/release-announcement.md) —— 仓库对外发布用的介绍文案（非专题）
 

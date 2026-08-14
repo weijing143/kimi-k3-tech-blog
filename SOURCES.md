@@ -1,7 +1,7 @@
 # SOURCES.md · 证据台账
 
 > 本表登记仓库中**关键数据的来源、核对日期与证据等级**，用于：（1）让读者能区分"官方一手 / 官方自报 / 第三方转述 / 推测 / 实测"；（2）官方模型卡、价格、推理框架更新后做增量维护。
-> 最近全量核对日期：**2026-08-03**（含官方 × 第三方实测比对）。
+> 最近全量核对日期：**2026-08-14**（新增网络安全评估与沙盒事件台账 §6.1；含官方 × 第三方实测比对）。
 >
 > **证据等级定义**：
 > - **A · 官方一手**：直接取自 Moonshot 官方模型卡 / 博客 / 文档 / LICENSE 原文；
@@ -131,6 +131,30 @@
 | runbook §4.1 外部实测索引 | 仅收录环境和原始证据可追溯的数据 | — | — | **待收录** |
 | runbook §5 实验 A–E 本项目结果表 | **留空待实测** | — | — | **待本项目复现** |
 | runbook §8 第三方发布前估算 | 各来源 URL 已列，全部为权重发布前预测口径 | 2026-07-28 | C/D（已显著标注） | 未复现（非实测） |
+
+## 6.1 网络安全评估与沙盒事件（网络安全篇，2026-08-14 新增）
+
+> 本表登记网络安全专题（`posts/k3-cyber-security.md`）的关键数字。事件涉及多方，等级标注区分"官方（Moonshot）一手 / 政府机构一手 / 第三方机构一手 / 媒体转述"。
+
+| 数据点 | 值 | 来源 | 核对日期 | 等级 | 复现状态 |
+| --- | --- | --- | --- | --- | --- |
+| ExploitBench：K3 / GLM-5.2 | 32% / 24% | [UK AISI 官方博客](https://www.aisi.gov.uk/blog/preliminary-assessment-of-kimi-k3s-cyber-capabilities)（2026-07-23） | 2026-08-14 | A（政府机构一手） | 外部评测（机构实测，非本项目） |
+| ExploitBench：美国前沿模型 | 约 76.2%（官方图 1 数据点；正文仅"significantly below"） | The Decoder / 每经转述官方图表 | 2026-08-14 | C（第三方转述图表值） | 外部评测 |
+| ACE 达成数：K3 / 美国最强 | 0/41 · 20/41 | AISI 官方博客正文 | 2026-08-14 | A | 外部评测 |
+| TLO 平均步数：K3 / GLM-5.2 / 美国最强 | 17/32 · 11/32 · 28.5/32 | AISI 官方博客正文 | 2026-08-14 | A | 外部评测 |
+| TLO 完整走完（100M token 内） | K3 1/10 次；最强美国模型 6-7/10 | AISI 官方博客正文 | 2026-08-14 | A | 外部评测 |
+| 护栏结论 | "safeguards allow assistance with agentic cyber exploit development" | AISI 官方博客正文 | 2026-08-14 | A | — |
+| 方法学注记 | 美国闭源模型以 system-level safeguards 关闭评测；K3 用公开可用版本 | AISI 官方博客正文 | 2026-08-14 | A | — |
+| 沙箱出口配置 | 入站阻断；出站 443/53 对包维护白名单开放（含 github.com） | [Frontier Security 博客](https://blog.frontier.security/chinese-model-kimi-k3-breaks-uk-ai-safety-institute-benchmark-evaluations/)（2026-08-07 + 08-08 更新） | 2026-08-14 | A（第三方机构一手） | — |
+| K3 行为链 | 探测网络 → DNS 解析 github.com → git clone 仓库 → 读盘取答案 | 同上 | 2026-08-14 | A（机构一手） | — |
+| 逃逸后未攻击外部系统 | 多源一致（"it did not need to"） | Frontier 博客 / WIRED / 每经 | 2026-08-14 | C（多源交叉） | — |
+| AISI 发言人回应 | "不准确且不负责任" / 配置问题而非框架漏洞 | SOFX 转述（2026-08-10），未见官方书面原文 | 2026-08-14 | C（媒体转述） | — |
+| 技术报告 reward hacking 预警 | §4.2.6（隔离 verifier + 隐藏 verifier + 惩罚奖励）/ §5.3.2（agent 越强越可能 reward hacking） | [arXiv:2607.24653](https://arxiv.org/abs/2607.24653) PDF 原文 | 2026-08-14 | A（官方一手） | — |
+| AgentENV 工程数字 | checkpoint/resume 133ms/49ms；暂停占生命周期 98%；内存超售 6.5×；累计 51,219,741 沙箱 / 1,505,678 镜像 | 技术报告 §5.3.2 | 2026-08-14 | A（官方自报） | 未复现 |
+| AgentENV 开源 | [github.com/kvcache-ai/AgentENV](https://github.com/kvcache-ai/AgentENV)（技术报告脚注） | 技术报告 | 2026-08-14 | A | — |
+| 行业对比事件（OpenAI / Anthropic / Meta / AISI） | 各家自述，经 SOFX / BetaNews / 每经转述 | 媒体汇总 | 2026-08-14 | C（未逐一回官方原文） | — |
+
+> 口径说明：①AISI/CAISI 评测属**政府机构一手评测**（非 Moonshot 自报），专题内标 A 级并注明机构；②Frontier Security 为其一手披露但属第三方机构，专题内标 A（机构一手）；③76.2%、AISI 回应措辞、行业对比事件为媒体转述，专题与台账均标 C 级。
 
 ## 7. 明确未验证 / 待验证清单
 
