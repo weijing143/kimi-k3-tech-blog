@@ -2,7 +2,7 @@
 
 ![CI](https://github.com/weijing143/kimi-k3-tech-blog/actions/workflows/test.yml/badge.svg)
 ![License](https://img.shields.io/badge/License-CC%20BY--NC%204.0-8ca0ff)
-![Topics](https://img.shields.io/badge/Topics-10%20篇专题-34d399)
+![Topics](https://img.shields.io/badge/Topics-11%20篇专题-34d399)
 
 本仓库是对 Moonshot AI（月之暗面）于 2026-07-16 发布的 **Kimi K3** 模型的技术资料整理，仅供个人学习参考。权重与技术报告已于 2026-07-27 发布（Hugging Face `moonshotai/Kimi-K3`，Kimi K3 License）。
 
